@@ -5,6 +5,7 @@ interface InputProps {
         type: string;
         name: string;
         value: string;
+        label?: string;
     };
     onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
 }
@@ -41,7 +42,6 @@ const Input: React.FC<InputProps> = ({ data, onChange }) => {
                     />
                 )
             }
-            
         </div>
     );
 };
