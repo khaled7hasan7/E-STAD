@@ -1,4 +1,4 @@
-import NewLogin from "@/components/nweLogin";
+import NewLogin from "@/components/Login";
 import { useState } from "react";
 
 const HomePage = () => {
@@ -10,8 +10,9 @@ const HomePage = () => {
     return(
         <div className="rounded-lg bg-mainColor">
 
-        <NewLogin />
-       
+        {/* <NewLogin /> */}
+        <h1>home page</h1>
+    
         </div>
     );
 }
