@@ -5,7 +5,6 @@ import HomePage from "./pages/Home";
 import SignupPage from "./components/Signup";
 import ServicesPage from "./pages/Services";
 import UsPage from "./pages/Us";
-import Dashboard from "./components/MainDashboard"; // Import the MainDashboard component
 
 // Authentication utility function
 const isAuthenticated = () => {
@@ -44,7 +43,8 @@ const AppRouter = () => {
                 {
                     path: "dashboard",
                     element: (
-                        <ProtectedRoute element={<Dashboard />} />
+                        // <ProtectedRoute element={<Dashboard />} />
+                        <ProtectedRoute element={<HomePage />} />
                     ), // Protect the dashboard route
                 },
             ],
