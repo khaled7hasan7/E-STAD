@@ -5,6 +5,7 @@ import HomePage from "./pages/Home";
 import SignupPage from "./components/Signup";
 import ServicesPage from "./pages/Services";
 import UsPage from "./pages/Us";
+import CreateStadPage from "./pages/CreateStad";
 
 // Authentication utility function
 const isAuthenticated = () => {
@@ -39,6 +40,10 @@ const AppRouter = () => {
                 {
                     path: "services",
                     element: <ServicesPage />,
+                },
+                {
+                    path: "createStad",
+                    element: <CreateStadPage />,
                 },
                 {
                     path: "dashboard",

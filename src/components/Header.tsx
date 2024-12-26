@@ -6,6 +6,7 @@ const menuItems: { title: string, path: string, isEnd: boolean }[] = [
     { title: 'الصفحة الرئيسية', path: '/', isEnd: true },
     { title: 'الخدمات', path: '/services', isEnd: false },
     { title: 'من نحن', path: '/us', isEnd: false },
+    { title: 'انشئ ملعبك', path: '/createStad', isEnd: false },
 ];
 
 const Header = () => {
