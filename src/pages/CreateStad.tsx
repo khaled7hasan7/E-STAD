@@ -4,14 +4,18 @@ const CreateStadiumForm: React.FC = () => {
     const [formData, setFormData] = useState({
         name: "",
         location: "",
+        hourlyPrice: "",
         length: "",
         width: "",
-        availableFrom: "",
-        availableTo: "",
-        pricePerHour: "",
-        playerCapacity: "",
-        notes: "",
-        image: null as File | null,
+        hasLighting: false,
+        hasBalls: false,
+        mainImage: null as File | null,
+        additionalImages: [] as File[],
+        remarks: "",
+        numberOfPlayers: "",
+        status: "PENDING", // Default status for stadiums
+        ownerId: "", // Owner's ID (e.g., fetched from authentication)
+        adminId: "", // Admin ID (optional, handled after approval/rejection)
     });
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -19,9 +23,20 @@ const CreateStadiumForm: React.FC = () => {
         setFormData({ ...formData, [name]: value });
     };
 
-    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, checked } = e.target;
+        setFormData({ ...formData, [name]: checked });
+    };
+
+    const handleMainImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
-            setFormData({ ...formData, image: e.target.files[0] });
+            setFormData({ ...formData, mainImage: e.target.files[0] });
+        }
+    };
+
+    const handleAdditionalImagesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files) {
+            setFormData({ ...formData, additionalImages: Array.from(e.target.files) });
         }
     };
 
@@ -60,6 +75,30 @@ const CreateStadiumForm: React.FC = () => {
                 </div>
             </div>
 
+            {/* Hourly Price & Number of Players */}
+            <div className="grid grid-cols-2 gap-4">
+                <div>
+                    <label className="block text-sm mb-2 text-right">سعر الساعة</label>
+                    <input
+                        type="text"
+                        name="hourlyPrice"
+                        value={formData.hourlyPrice}
+                        onChange={handleInputChange}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-green-500"
+                    />
+                </div>
+                <div>
+                    <label className="block text-sm mb-2 text-right">عدد اللاعبين</label>
+                    <input
+                        type="text"
+                        name="numberOfPlayers"
+                        value={formData.numberOfPlayers}
+                        onChange={handleInputChange}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-green-500"
+                    />
+                </div>
+            </div>
+
             {/* Length & Width */}
             <div className="grid grid-cols-2 gap-4">
                 <div>
@@ -84,83 +123,64 @@ const CreateStadiumForm: React.FC = () => {
                 </div>
             </div>
 
-            {/* Availability Time */}
+            {/* Features */}
             <div className="grid grid-cols-2 gap-4">
-                <div>
-                    <label className="block text-sm mb-2 text-right">متوفر الملعب من</label>
+                <div className="flex items-center">
                     <input
-                        type="time"
-                        name="availableFrom"
-                        value={formData.availableFrom}
-                        onChange={handleInputChange}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-green-500"
+                        type="checkbox"
+                        name="hasLighting"
+                        checked={formData.hasLighting}
+                        onChange={handleCheckboxChange}
+                        className="h-4 w-4 text-green-500 border-gray-300 rounded focus:ring focus:ring-green-500"
                     />
+                    <label className="ml-2 text-sm text-right">إضاءة</label>
                 </div>
-                <div>
-                    <label className="block text-sm mb-2 text-right">إلى</label>
+                <div className="flex items-center">
                     <input
-                        type="time"
-                        name="availableTo"
-                        value={formData.availableTo}
-                        onChange={handleInputChange}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-green-500"
+                        type="checkbox"
+                        name="hasBalls"
+                        checked={formData.hasBalls}
+                        onChange={handleCheckboxChange}
+                        className="h-4 w-4 text-green-500 border-gray-300 rounded focus:ring focus:ring-green-500"
                     />
+                    <label className="ml-2 text-sm text-right">كرات</label>
                 </div>
             </div>
 
-            {/* Price & Player Capacity */}
-            <div className="grid grid-cols-2 gap-4">
-                <div>
-                    <label className="block text-sm mb-2 text-right">سعر الساعة</label>
-                    <input
-                        type="text"
-                        name="pricePerHour"
-                        value={formData.pricePerHour}
-                        onChange={handleInputChange}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-green-500"
-                    />
-                </div>
-
-                <div>
-                    <label className="block text-sm mb-2 text-right">عدد اللاعبين</label>
-                    <input
-                        type="number"
-                        name="playerCapacity"
-                        value={formData.playerCapacity}
-                        onChange={handleInputChange}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-green-500"
-                    />
-                </div>
-            </div>
-
-            {/* Notes */}
+            {/* Remarks */}
             <div>
                 <label className="block text-sm mb-2 text-right">ملاحظات</label>
                 <textarea
-                    name="notes"
-                    value={formData.notes}
+                    name="remarks"
+                    value={formData.remarks}
                     onChange={handleInputChange}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-green-500"
                 ></textarea>
             </div>
 
-            {/* Image Upload */}
-            <div className="text-center">
-                <label
-                    htmlFor="imageUpload"
-                    className="cursor-pointer inline-flex items-center space-x-2 bg-gray-100 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-green-500"
-                >
-                    <span>اختر صورة</span>
-                    <input
-                        type="file"
-                        id="imageUpload"
-                        name="image"
-                        accept="image/*"
-                        onChange={handleImageChange}
-                        className="hidden"
-                    />
-                </label>
-                {formData.image && <p className="mt-2 text-sm text-gray-500">{formData.image.name}</p>}
+            {/* Main Image */}
+            <div>
+                <label className="block text-sm mb-2 text-right">الصورة الرئيسية</label>
+                <input
+                    type="file"
+                    name="mainImage"
+                    accept="image/*"
+                    onChange={handleMainImageChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-green-500"
+                />
+            </div>
+
+            {/* Additional Images */}
+            <div>
+                <label className="block text-sm mb-2 text-right">صور إضافية</label>
+                <input
+                    type="file"
+                    name="additionalImages"
+                    accept="image/*"
+                    multiple
+                    onChange={handleAdditionalImagesChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-green-500"
+                />
             </div>
 
             {/* Submit Button */}
