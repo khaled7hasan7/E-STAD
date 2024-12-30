@@ -1,9 +1,13 @@
-import React, { useState, useRef, ChangeEvent } from "react";
+import React, { useState, useRef, ChangeEvent, useContext } from "react";
 import bg from "@/assets/bg.png";
-import authService from "../Services/authService.js"; // Adjust the path to your authService.js
+import authService from "@/Services/authService";
+import { AuthContext } from "@/contexts/authContext";
+import { useNavigate } from "react-router-dom";
 
 const LoginPage: React.FC = () => {
+  const { login } = useContext(AuthContext)!; // Use context for login function
   const form = useRef<HTMLFormElement>(null);
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -50,19 +54,13 @@ const LoginPage: React.FC = () => {
         };
         const response = await authService.login(loginDTO);
 
-        // Save the token to localStorage (or sessionStorage if `rememberMe` is false)
         const token = response.token; // Assuming the token is in the response
-        if (formData.rememberMe) {
-          localStorage.setItem("authToken", token);
-        } else {
-          sessionStorage.setItem("authToken", token);
-        }
 
-        console.log("Login successful:", response);
+        // Use login from AuthContext to handle authentication logic
+        login(token, formData.rememberMe);
+        navigate('/');
 
-        // Redirect or handle success (e.g., navigate to a dashboard)
-        window.location.href = "/dashboard"; // Adjust the route as needed
-      } catch (error) {
+      } catch (error: any) {
         console.error("Login failed:", error);
         setLoginError("تسجيل الدخول فشل. الرجاء التحقق من البيانات.");
       }

@@ -1,8 +1,9 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import NavigationItem from "./NavigationItem";
 import { useNavigate } from "react-router-dom";
 // import { MdOutlineMenu } from "react-icons/md";
 // import { RxCross1 } from "react-icons/rx";
+import { AuthContext } from "@/contexts/authContext";
 
 interface MenuItem {
     title: string;
@@ -15,18 +16,16 @@ interface MainNavigationProps {
 }
 
 const MainNavigation: React.FC<MainNavigationProps> = ({menuItems}) => {
-    const [ visibleMenu, setVisibleMenu ] = useState(false);
+    // const { isLoggedIn } = useContext(true: Boolean); 
+    // const [ visibleMenu, setVisibleMenu ] = useState(false);
+    const { isAuthenticated, logout } = useContext(AuthContext)!;
     const bodyRef = useRef(document.body);
     
         const navigate = useNavigate();
-        
-        const handleButtonClick = (moveTo: string) => {
-            navigate(moveTo);
-        };
 
-    const handleClick = () => {
-        setVisibleMenu(!visibleMenu);
-    }
+    // const handleClick = () => {
+    //     setVisibleMenu(!visibleMenu);
+    // }
 
     return (
         <>
@@ -40,22 +39,34 @@ const MainNavigation: React.FC<MainNavigationProps> = ({menuItems}) => {
                             isEnd={menuItem.isEnd}
                         />
                     ))}
+                    {!isAuthenticated ? 
                     <div className="flex gap-2">
                         <button 
-                            onClick={() => handleButtonClick('/login')} 
+                            onClick={() => navigate('/login')} 
                             className='rounded-md bg-mainColor ml-2 px-3 py-2 text-base font-medium text-white hover:bg-opacity-80 dark:bg-mainColor dark:text-white dark:hover:bg-opacity-80'
                         >
                             تسجيل دخول
                         </button>
                         <button 
-                            onClick={() => handleButtonClick('/signup')}  
+                            onClick={() => navigate('/signup')}  
                             className='rounded-md bg-mainColor ml-2 px-3 py-2 text-base font-medium text-white hover:bg-opacity-80 dark:bg-mainColor dark:text-white dark:hover:bg-opacity-80'
                         >
                             إنشاء حساب
                         </button>
+                    </div> 
+                    :
+                    <div className="flex gap-2">
+                        <button 
+                            onClick={() => logout()} 
+                            className='rounded-md bg-mainColor ml-2 px-3 py-2 text-base font-medium text-white hover:bg-opacity-80 dark:bg-mainColor dark:text-white dark:hover:bg-opacity-80'
+                        >
+                            تسجيل خروج
+                        </button>
                     </div>
+                    }
                 </ul>
             </nav>
+
             {/* <nav className="pointer-events-auto flex flex-col items-center justify-center sm:hidden">
                 <button onClick={handleClick} className=""><MdOutlineMenu size={35} /></button>
                 <div className={visibleMenu ? 'block' : 'hidden'} onClick={handleClick}>

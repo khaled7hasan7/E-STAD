@@ -1,6 +1,7 @@
 import React, { useState, useRef, ChangeEvent } from "react";
 import bg from "@/assets/bg.png";
-import authService from "../Services/authService.js"; // Adjust the path to your authService.js
+import authService from '@/Services/authService.js';
+
 
 const SignupPage: React.FC = () => {
   const form = useRef<HTMLFormElement>(null);

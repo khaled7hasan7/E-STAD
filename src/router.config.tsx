@@ -3,7 +3,7 @@ import RootLayout from "./pages/Root";
 import LoginPage from "./components/Login";
 import HomePage from "./pages/Home";
 import SignupPage from "./components/Signup";
-import ServicesPage from "./pages/Services";
+import StadiumPage from "./pages/MuStadium";
 import UsPage from "./pages/Us";
 import CreateStadPage from "./pages/CreateStad";
 
@@ -38,8 +38,8 @@ const AppRouter = () => {
                     element: <UsPage />,
                 },
                 {
-                    path: "services",
-                    element: <ServicesPage />,
+                    path: "stadium",
+                    element: <StadiumPage />,
                 },
                 {
                     path: "createStad",
