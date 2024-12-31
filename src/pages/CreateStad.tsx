@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import stadiumService from "../Services/stadiumService.js"; // Import the stadium service
 
 const CreateStadiumForm: React.FC = () => {
     const [formData, setFormData] = useState({
@@ -17,6 +18,10 @@ const CreateStadiumForm: React.FC = () => {
         ownerId: "", // Owner's ID (e.g., fetched from authentication)
         adminId: "", // Admin ID (optional, handled after approval/rejection)
     });
+
+    const [loading, setLoading] = useState(false);
+    const [successMessage, setSuccessMessage] = useState("");
+    const [errorMessage, setErrorMessage] = useState("");
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
@@ -40,10 +45,70 @@ const CreateStadiumForm: React.FC = () => {
         }
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        console.log("Form Data Submitted:", formData);
+        setLoading(true);
+        setSuccessMessage("");
+        setErrorMessage("");
+
+        try {
+            // Prepare stadium data object
+            const stadiumData = {
+                name: formData.name,
+                location: formData.location,
+                hourlyPrice: parseFloat(formData.hourlyPrice),
+                length: parseFloat(formData.length),
+                width: parseFloat(formData.width),
+                hasLighting: formData.hasLighting,
+                hasBalls: formData.hasBalls,
+                remarks: formData.remarks,
+                numberOfPlayers: parseInt(formData.numberOfPlayers, 10),
+            };
+
+            // Ensure mainImage is provided
+            if (!formData.mainImage) {
+                throw new Error("الصورة الرئيسية مطلوبة."); // Main image is required
+            }
+
+            // Call the service to add the stadium
+            const response = await stadiumService.addStadium(
+                stadiumData,
+                formData.mainImage, // Main image
+                formData.additionalImages // Additional images
+            );
+
+            console.log("Stadium created successfully:", response);
+            setSuccessMessage("تم إضافة الملعب بنجاح!");
+
+            // Reset form state
+            setFormData({
+                name: "",
+                location: "",
+                hourlyPrice: "",
+                length: "",
+                width: "",
+                hasLighting: false,
+                hasBalls: false,
+                mainImage: null,
+                additionalImages: [],
+                remarks: "",
+                numberOfPlayers: "",
+                status: "PENDING",
+                ownerId: "",
+                adminId: "",
+            });
+        } catch (error: any) {
+            console.error("Error adding stadium:", error); // Log the error
+
+            // Set error message based on the error response
+            setErrorMessage(
+                error.response?.data?.message || "فشل في إضافة الملعب."
+            );
+        } finally {
+            setLoading(false);
+        }
     };
+
 
     return (
         <form onSubmit={handleSubmit} className="p-6 bg-white rounded-md shadow-md space-y-6 max-w-lg mx-auto">
@@ -187,11 +252,16 @@ const CreateStadiumForm: React.FC = () => {
             <div className="text-center">
                 <button
                     type="submit"
+                    disabled={loading}
                     className="bg-green-500 text-white px-6 py-2 rounded-md hover:bg-green-600 focus:outline-none focus:ring focus:ring-green-500"
                 >
-                    حفظ
+                    {loading ? "جاري الحفظ..." : "حفظ"}
                 </button>
             </div>
+
+            {/* Success/Error Messages */}
+            {successMessage && <p className="text-green-500 text-center mt-4">{successMessage}</p>}
+            {errorMessage && <p className="text-red-500 text-center mt-4">{errorMessage}</p>}
         </form>
     );
 };
