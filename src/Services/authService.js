@@ -46,7 +46,7 @@ const authService = {
 
             // Set Authorization header with the access token
             setAuthToken(data.access_token);
-
+            console.log(data.access_token);
             return data;
         } catch (error) {
             console.error('Error during login:', error);
