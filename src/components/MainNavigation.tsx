@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
 import NavigationItem from "./NavigationItem";
 import { useNavigate } from "react-router-dom";
-// import { MdOutlineMenu } from "react-icons/md";
-// import { RxCross1 } from "react-icons/rx";
 import { AuthContext } from "@/contexts/authContext";
 
 interface MenuItem {
@@ -16,8 +14,6 @@ interface MainNavigationProps {
 }
 
 const MainNavigation: React.FC<MainNavigationProps> = ({menuItems}) => {
-    // const { isLoggedIn } = useContext(true: Boolean); 
-    // const [ visibleMenu, setVisibleMenu ] = useState(false);
     const { isAuthenticated, logout } = useContext(AuthContext)!;
     const bodyRef = useRef(document.body);
     
@@ -31,14 +27,6 @@ const MainNavigation: React.FC<MainNavigationProps> = ({menuItems}) => {
         <>
             <nav className="pointer-events-auto hidden sm:block">
                 <ul className="flex justify-center items-center ">
-                    {menuItems.map((menuItem) => (
-                        <NavigationItem
-                            key={menuItem.title}
-                            title={menuItem.title}
-                            path={menuItem.path}
-                            isEnd={menuItem.isEnd}
-                        />
-                    ))}
                     {!isAuthenticated ? 
                     <div className="flex gap-2">
                         <button 
@@ -55,6 +43,15 @@ const MainNavigation: React.FC<MainNavigationProps> = ({menuItems}) => {
                         </button>
                     </div> 
                     :
+                    <>
+                    {menuItems.map((menuItem) => (
+                        <NavigationItem
+                            key={menuItem.title}
+                            title={menuItem.title}
+                            path={menuItem.path}
+                            isEnd={menuItem.isEnd}
+                        />
+                    ))}
                     <div className="flex gap-2">
                         <button 
                             onClick={() => logout()} 
@@ -63,6 +60,7 @@ const MainNavigation: React.FC<MainNavigationProps> = ({menuItems}) => {
                             تسجيل خروج
                         </button>
                     </div>
+                    </>
                     }
                 </ul>
             </nav>

@@ -24,13 +24,13 @@ interface StadiumDetailsProps {
 }
 
 const StadiumDetails: React.FC<StadiumDetailsProps> = ({
-                                                           stadiumData,
-                                                           isEditing,
-                                                           onInputChange,
-                                                           onCheckboxChange,
-                                                           onMainImageChange,
-                                                           onAdditionalImagesChange,
-                                                       }) => {
+                                                            stadiumData,
+                                                            isEditing,
+                                                            onInputChange,
+                                                            onCheckboxChange,
+                                                            onMainImageChange,
+                                                            onAdditionalImagesChange,
+                                                        }) => {
     return (
         <div dir="rtl"> {/* Ensure Right-to-Left layout */}
             <h2 className="text-lg font-bold text-center mb-4">تفاصيل الملعب:</h2>

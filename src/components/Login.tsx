@@ -57,7 +57,7 @@ const LoginPage: React.FC = () => {
         const token = response.token; // Assuming the token is in the response
 
         // Use login from AuthContext to handle authentication logic
-        login(token, formData.rememberMe);
+        login(token, response.Role, formData.rememberMe);
         navigate('/');
 
       } catch (error: any) {

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import stadiumService from "../Services/stadiumService.js";
 import stadiumScheduleService from "../Services/stadiumScheduleService.js";
-import StadiumDetails from "./StadiumDetails";
-import StadiumSchedules from "./StadiumSchedules";
+import StadiumDetails from "../components/StadiumDetails.js";
+import StadiumSchedules from "../components/StadiumSchedules.js";
 
 // Define types for Stadium and other state
 interface Stadium {

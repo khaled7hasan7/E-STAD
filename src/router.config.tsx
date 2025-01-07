@@ -6,6 +6,7 @@ import SignupPage from "./components/Signup";
 import StadiumPage from "./pages/MuStadium";
 import UsPage from "./pages/Us";
 import CreateStadPage from "./pages/CreateStad";
+import AdminNotification from "./pages/AdminNotifications";
 
 // Authentication utility function
 const isAuthenticated = () => {
@@ -44,6 +45,10 @@ const AppRouter = () => {
                 {
                     path: "createStad",
                     element: <CreateStadPage />,
+                },
+                {
+                    path: "adminNoti",
+                    element: <AdminNotification />,
                 },
                 {
                     path: "dashboard",
