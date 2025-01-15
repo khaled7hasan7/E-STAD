@@ -16,12 +16,19 @@ interface AuthProviderProps {
 const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [role, setRole] = useState<string | null>(null);
+  console.log("Worood "+role)
 
   useEffect(() => {
     const token = localStorage.getItem("authToken") || sessionStorage.getItem("authToken");
     const storedRole = localStorage.getItem("userRole") || sessionStorage.getItem("userRole");
+    // const storedRole = localStorage.getItem("userRole") || sessionStorage.getItem("userRole");
+
     if (token) {
       setIsAuthenticated(true);
+      setRole(storedRole);
+    }
+
+    if (storedRole) {
       setRole(storedRole);
     }
   }, []);
@@ -56,6 +63,12 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }),
       [isAuthenticated, role]
   );
+
+    // return (
+    //     <AuthContext.Provider value={{ isAuthenticated, login, logout, role }}>
+    //         {children}
+    //     </AuthContext.Provider>
+    // );
 
   return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>;
 };

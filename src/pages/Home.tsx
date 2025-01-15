@@ -5,6 +5,7 @@ import { AuthContext } from "@/contexts/authContext";
 import LoginPage from "@/components/Login";
 import stadiumScheduleService from "@/Services/stadiumScheduleService";
 import AcceptedStadiumList from "@/components/AcceptedStadiumList";
+import Login from "@/components/Login";
 import stadiumService from "@/Services/stadiumService";
 
 const HomePage: React.FC = () => {
@@ -182,7 +183,9 @@ const HomePage: React.FC = () => {
     return (
         <>
             {role !== "OWNER" ? (
-                <AcceptedStadiumList />
+                <>
+                    {isAuthenticated ? <AcceptedStadiumList /> : <Login />}
+                </>
             ) : (
                 <div className="p-6 mx-auto">
                     {isAuthenticated ? (

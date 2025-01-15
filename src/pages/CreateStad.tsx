@@ -109,15 +109,17 @@ const CreateStadiumForm: React.FC = () => {
         }
     };
 
+    const colStyle = "grid grid-cols-[500px_500px] gap-20 mt-10 px-5";
+    const labelStyle="block text-lg my-3";
 
     return (
-        <form onSubmit={handleSubmit} className="p-6 bg-white rounded-md shadow-md space-y-6 max-w-lg mx-auto">
-            <h2 className="text-lg font-bold text-center">
+        <form onSubmit={handleSubmit} className="p-6 rounded-md shadow-xl px-5 my-5">
+            <h1 className="text-4xl font-black text-center">
                 ادخل معلومات ملعبك لتتمكن من نشره واستقبال الحجوزات:
-            </h2>
+            </h1>
 
             {/* Stadium Name & Location */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className={colStyle}>
                 <div>
                     <label className="block text-sm mb-2 text-right">اسم الملعب</label>
                     <input
@@ -141,7 +143,7 @@ const CreateStadiumForm: React.FC = () => {
             </div>
 
             {/* Hourly Price & Number of Players */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className={colStyle}>
                 <div>
                     <label className="block text-sm mb-2 text-right">سعر الساعة</label>
                     <input
@@ -165,7 +167,7 @@ const CreateStadiumForm: React.FC = () => {
             </div>
 
             {/* Length & Width */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className={colStyle}>
                 <div>
                     <label className="block text-sm mb-2 text-right">طول الملعب</label>
                     <input
@@ -189,7 +191,7 @@ const CreateStadiumForm: React.FC = () => {
             </div>
 
             {/* Features */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className={colStyle}>
                 <div className="flex items-center">
                     <input
                         type="checkbox"
@@ -214,7 +216,7 @@ const CreateStadiumForm: React.FC = () => {
 
             {/* Remarks */}
             <div>
-                <label className="block text-sm mb-2 text-right">ملاحظات</label>
+                <label className="block text-2xl mb-2 text-right">ملاحظات</label>
                 <textarea
                     name="remarks"
                     value={formData.remarks}
@@ -225,7 +227,7 @@ const CreateStadiumForm: React.FC = () => {
 
             {/* Main Image */}
             <div>
-                <label className="block text-sm mb-2 text-right">الصورة الرئيسية</label>
+                <label className="block text-2xl mb-2 text-right">الصورة الرئيسية</label>
                 <input
                     type="file"
                     name="mainImage"
@@ -237,7 +239,7 @@ const CreateStadiumForm: React.FC = () => {
 
             {/* Additional Images */}
             <div>
-                <label className="block text-sm mb-2 text-right">صور إضافية</label>
+                <label className="block text-2xl mb-2 text-right">صور إضافية</label>
                 <input
                     type="file"
                     name="additionalImages"
@@ -253,7 +255,7 @@ const CreateStadiumForm: React.FC = () => {
                 <button
                     type="submit"
                     disabled={loading}
-                    className="bg-green-500 text-white px-6 py-2 rounded-md hover:bg-green-600 focus:outline-none focus:ring focus:ring-green-500"
+                    className="bg-mainColor m-6 text-white px-6 py-2 rounded-md hover:bg-green-600 focus:outline-none focus:ring focus:ring-green-500"
                 >
                     {loading ? "جاري الحفظ..." : "حفظ"}
                 </button>

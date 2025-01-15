@@ -68,7 +68,7 @@ const authService = {
 
     registerOwner: async (user) => {
         try {
-            console.log("WOROOD ASSI IS YOUR UNCLE")
+            console.log("WOROOD ASSI IS YOUR UNCLE");
             const { accessToken } = getAuthData();
             setAuthToken(accessToken); // Attach token
             const response = await apiClient.post("/register-owner", user);

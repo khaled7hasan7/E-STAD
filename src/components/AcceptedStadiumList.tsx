@@ -26,7 +26,7 @@ const AcceptedStadiumList: React.FC = () => {
     const navigate = useNavigate(); // Initialize useNavigate for navigation
     const [stadiums, setStadiums] = useState<Stadium[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
-
+console.table(stadiums);
     useEffect(() => {
         const fetchAcceptedStadiums = async () => {
             try {
@@ -45,6 +45,13 @@ const AcceptedStadiumList: React.FC = () => {
         } else {
             navigate("/"); // Navigate to the home page if the user is not an admin
         }
+
+
+        if (role === "ADMIN") {
+            fetchAcceptedStadiums(); // Fetch stadiums only if the user is an admin
+        } else {
+            navigate("/"); // Navigate to the home page if the user is not an admin
+        }
     }, [role, navigate]);
 
     if (loading) {
@@ -53,32 +60,38 @@ const AcceptedStadiumList: React.FC = () => {
 
     return (
         <div dir="rtl">
-            <h2 className="text-xl font-bold mb-4">الملاعب المقبولة</h2> {/* Header for accepted stadiums */}
+        <h2 className="text-5xl font-black text-center my-5">الملاعب المقبولة</h2> {/* Header for accepted stadiums */}
             <div className="overflow-x-auto">
-                <table className="min-w-full table-auto border-collapse border border-gray-300">
-                    <thead>
-                    <tr className="bg-gray-100 text-left">
-                        <th className="px-4 py-2 text-sm font-semibold text-gray-700">الاسم</th>
-                        <th className="px-4 py-2 text-sm font-semibold text-gray-700">الموقع</th>
-                        <th className="px-4 py-2 text-sm font-semibold text-gray-700">السعر بالساعة</th>
-                        <th className="px-4 py-2 text-sm font-semibold text-gray-700">الإجراءات</th>
+                <table className="min-w-[70rem] bg-white shadow-lg rounded-lg overflow-hidden">
+                    <thead className=" bg-mainColor/15 text-white">
+                    <tr>
+                        <th className="px-6 py-4 text-sm text-black font-semibold">الاسم</th>
+                        <th className="px-6 py-4 text-sm text-black font-semibold">الموقع</th>
+                        <th className="px-6 py-4 text-sm text-black font-semibold">السعر بالساعة</th>
+                        <th className="px-6 py-4 text-sm text-black font-semibold">الإجراءات</th>
                     </tr>
                     </thead>
-                    <tbody>
+                    <tbody className="divide-y divide-gray-200">
                     {stadiums.map((stadium) => (
                         <tr
                             key={stadium.id}
-                            className="border-b border-gray-200 hover:bg-gray-50"
+                            className="hover:bg-gray-100 transition-colors"
                         >
-                            <td className="px-4 py-2 text-sm text-gray-700">{stadium.name}</td>
-                            <td className="px-4 py-2 text-sm text-gray-700">{stadium.location}</td>
-                            <td className="px-4 py-2 text-sm text-gray-700">{stadium.hourlyPrice} ₪</td>
-                            <td className="px-4 py-2 text-sm text-center">
+                            <td className="px-6 py-4 border-l border-zinc-300 text-sm text-gray-700">
+                                {stadium.name}
+                            </td>
+                            <td className="px-6 py-4 border-l border-zinc-300 text-sm text-gray-700">
+                                {stadium.location}
+                            </td>
+                            <td className="px-6 py-4 border-l border-zinc-300 text-sm text-gray-700">
+                                {stadium.hourlyPrice} ₪
+                            </td>
+                            <td className="px-6 py-4 text-sm text-center">
                                 <button
                                     onClick={() =>
                                         console.log(`Viewing stadium with ID: ${stadium.id}`)
-                                    } // Replace with actual view logic
-                                    className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none"
+                                    }
+                                    className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition focus:outline-none"
                                 >
                                     عرض التفاصيل
                                 </button>
@@ -87,6 +100,7 @@ const AcceptedStadiumList: React.FC = () => {
                     ))}
                     </tbody>
                 </table>
+
             </div>
         </div>
     );
