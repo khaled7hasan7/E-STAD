@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useNavigate } from "react-router-dom";
 import adminService from "@/Services/adminService";
 import { AuthContext } from "@/contexts/authContext";
 
@@ -26,7 +26,7 @@ const AcceptedStadiumList: React.FC = () => {
     const navigate = useNavigate(); // Initialize useNavigate for navigation
     const [stadiums, setStadiums] = useState<Stadium[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
-console.table(stadiums);
+
     useEffect(() => {
         const fetchAcceptedStadiums = async () => {
             try {
@@ -41,18 +41,23 @@ console.table(stadiums);
         };
 
         if (role === "ADMIN") {
-            fetchAcceptedStadiums(); // Fetch stadiums only if the user is an admin
-        } else {
-            navigate("/"); // Navigate to the home page if the user is not an admin
-        }
-
-
-        if (role === "ADMIN") {
-            fetchAcceptedStadiums(); // Fetch stadiums only if the user is an admin
+            fetchAcceptedStadiums();
         } else {
             navigate("/"); // Navigate to the home page if the user is not an admin
         }
     }, [role, navigate]);
+
+    const handleCancel = async (stadiumId: string) => {
+        try {
+            await adminService.cancelStadium(stadiumId); // Call cancelStadium function
+            setStadiums((prevStadiums) =>
+                prevStadiums.filter((stadium) => stadium.id !== stadiumId)
+            ); // Remove the canceled stadium from the list
+            console.log(`Stadium with ID: ${stadiumId} canceled successfully.`);
+        } catch (error) {
+            console.error(`Error canceling stadium with ID: ${stadiumId}`, error);
+        }
+    };
 
     if (loading) {
         return <div className="text-center text-gray-600">جاري التحميل...</div>;
@@ -60,10 +65,10 @@ console.table(stadiums);
 
     return (
         <div dir="rtl">
-        <h2 className="text-5xl font-black text-center my-5">الملاعب المقبولة</h2> {/* Header for accepted stadiums */}
+            <h2 className="text-5xl font-black text-center my-5">الملاعب المقبولة</h2>
             <div className="overflow-x-auto">
                 <table className="min-w-[70rem] bg-white shadow-lg rounded-lg overflow-hidden">
-                    <thead className=" bg-mainColor/15 text-white">
+                    <thead className="bg-mainColor/15 text-white">
                     <tr>
                         <th className="px-6 py-4 text-sm text-black font-semibold">الاسم</th>
                         <th className="px-6 py-4 text-sm text-black font-semibold">الموقع</th>
@@ -86,7 +91,7 @@ console.table(stadiums);
                             <td className="px-6 py-4 border-l border-zinc-300 text-sm text-gray-700">
                                 {stadium.hourlyPrice} ₪
                             </td>
-                            <td className="px-6 py-4 text-sm text-center">
+                            <td className="px-6 py-4 text-sm text-center flex gap-4 justify-center">
                                 <button
                                     onClick={() =>
                                         console.log(`Viewing stadium with ID: ${stadium.id}`)
@@ -95,12 +100,17 @@ console.table(stadiums);
                                 >
                                     عرض التفاصيل
                                 </button>
+                                <button
+                                    onClick={() => handleCancel(stadium.id)}
+                                    className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition focus:outline-none"
+                                >
+                                    إلغاء
+                                </button>
                             </td>
                         </tr>
                     ))}
                     </tbody>
                 </table>
-
             </div>
         </div>
     );
