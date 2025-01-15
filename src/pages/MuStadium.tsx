@@ -170,7 +170,7 @@ const StadiumPage: React.FC = () => {
     const labelStyle="block text-lg my-3";
 
     return (
-        <div className="p-6rounded-md shadow-xl px-5 my-5">
+        <div className="p-6 rounded-md shadow-xl px-5 my-5">
         <h1 className="text-4xl font-black text-center">تفاصيل الملعب الخاص بك:</h1>
 
             {/* Stadium Details */}

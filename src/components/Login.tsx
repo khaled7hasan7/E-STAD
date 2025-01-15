@@ -78,7 +78,7 @@ const LoginPage: React.FC = () => {
           <div className="absolute inset-0 bg-white opacity-40"></div>
 
           <h1 className="relative z-10 text-4xl font-bold text-mainColor px-8 py-4 rounded-md">
-            مرحباً بك في E-STAD
+            E-STAD مرحباً بك في  
           </h1>
         </div>
 

@@ -11,7 +11,7 @@ const Header = () => {
     let menuItems: { title: string, path: string, isEnd: boolean }[] = [
         { title: 'الصفحة الرئيسية', path: '/', isEnd: true },
     ];
-    if (role === "OWNER") {
+    if (role !== "OWNER") {
         menuItems = [
             ...menuItems,
             { title: 'الإشعارات', path: '/adminNoti', isEnd: false },

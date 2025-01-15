@@ -23,7 +23,7 @@ interface Stadium {
 const AcceptedStadiumList: React.FC = () => {
     const [stadiums, setStadiums] = useState<Stadium[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
-
+console.table(stadiums);
     useEffect(() => {
         const fetchStadiums = async () => {
         try {
@@ -48,36 +48,48 @@ const AcceptedStadiumList: React.FC = () => {
 
     return (
         <div dir="rtl">
-        <h2 className="text-xl font-bold mb-4">الملاعب المقبولة</h2> {/* Header for accepted stadiums */}
-        <div className="overflow-x-auto">
-            <table className="min-w-full table-auto border-collapse border border-gray-300">
-            <thead>
-                <tr className="bg-gray-100 text-left">
-                <th className="px-4 py-2 text-sm font-semibold text-gray-700">الاسم</th>
-                <th className="px-4 py-2 text-sm font-semibold text-gray-700">الموقع</th>
-                <th className="px-4 py-2 text-sm font-semibold text-gray-700">السعر بالساعة</th>
-                <th className="px-4 py-2 text-sm font-semibold text-gray-700">الإجراءات</th>
-                </tr>
-            </thead>
-            <tbody>
-                {stadiums.map((stadium) => (
-                <tr key={stadium.id} className="border-b border-gray-200 hover:bg-gray-50">
-                    <td className="px-4 py-2 text-sm text-gray-700">{stadium.name}</td>
-                    <td className="px-4 py-2 text-sm text-gray-700">{stadium.location}</td>
-                    <td className="px-4 py-2 text-sm text-gray-700">{stadium.hourlyPrice} ₪</td>
-                    <td className="px-4 py-2 text-sm text-center">
-                    {/* <button
-                        onClick={() => console.log(`Viewing stadium with ID: ${stadium.id}`)} // View or any other action
-                        className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none"
-                    >
-                        عرض التفاصيل
-                    </button> */}
-                    </td>
-                </tr>
-                ))}
-            </tbody>
-            </table>
-        </div>
+        <h2 className="text-5xl font-black text-center my-5">الملاعب المقبولة</h2> {/* Header for accepted stadiums */}
+            <div className="overflow-x-auto">
+                <table className="min-w-[70rem] bg-white shadow-lg rounded-lg overflow-hidden">
+                    <thead className=" bg-mainColor/15 text-white">
+                    <tr>
+                        <th className="px-6 py-4 text-sm text-black font-semibold">الاسم</th>
+                        <th className="px-6 py-4 text-sm text-black font-semibold">الموقع</th>
+                        <th className="px-6 py-4 text-sm text-black font-semibold">السعر بالساعة</th>
+                        <th className="px-6 py-4 text-sm text-black font-semibold">الإجراءات</th>
+                    </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-200">
+                    {stadiums.map((stadium) => (
+                        <tr
+                            key={stadium.id}
+                            className="hover:bg-gray-100 transition-colors"
+                        >
+                            <td className="px-6 py-4 border-l border-zinc-300 text-sm text-gray-700">
+                                {stadium.name}
+                            </td>
+                            <td className="px-6 py-4 border-l border-zinc-300 text-sm text-gray-700">
+                                {stadium.location}
+                            </td>
+                            <td className="px-6 py-4 border-l border-zinc-300 text-sm text-gray-700">
+                                {stadium.hourlyPrice} ₪
+                            </td>
+                            <td className="px-6 py-4 text-sm text-center">
+                                <button
+                                    onClick={() =>
+                                        console.log(`Viewing stadium with ID: ${stadium.id}`)
+                                    }
+                                    className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition focus:outline-none"
+                                >
+                                    عرض التفاصيل
+                                </button>
+                            </td>
+                        </tr>
+                    ))}
+                    </tbody>
+                </table>
+
+            </div>
         </div>
     );
 };

@@ -5,6 +5,7 @@ import { AuthContext } from "@/contexts/authContext";
 import LoginPage from "@/components/Login";
 import stadiumScheduleService from "@/Services/stadiumScheduleService"; 
 import AcceptedStadiumList from "@/components/AcceptedStadiumList";
+import Login from "@/components/Login";
 
 const HomePage: React.FC = () => {
     const { isAuthenticated, role } = useContext(AuthContext)!;
@@ -70,11 +71,13 @@ const HomePage: React.FC = () => {
     };
 
     const btnWeekStyle = "bg-mainColor text-white font-medium text-sm  mx-4 rounded-lg h-10 px-4 py-2 hover:bg-mainColor/60";
-
+console.log("Home Page: "+role);
     return (
         <>
-            {role === "OWNER" ? (
-                <AcceptedStadiumList />
+            {role !== "OWNER" ? (
+                <>
+                    {isAuthenticated ? <AcceptedStadiumList /> : <Login />}
+                </>
             ) : (
                 <div className="p-6 mx-auto">
                     {isAuthenticated ? (

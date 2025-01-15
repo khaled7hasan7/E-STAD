@@ -1,4 +1,3 @@
-// StadiumList.tsx
 import React, { useEffect, useState } from "react";
 import stadiumService from "@/Services/stadiumService";
 
@@ -65,43 +64,48 @@ const StadiumList: React.FC = () => {
   }
 
   return (
-    <div dir="rtl"> {/* Adding dir="rtl" here to ensure the container uses RTL layout */}
-      <div className="overflow-x-auto">
-        <table className="min-w-full table-auto border-collapse border border-gray-300">
-          <thead>
-            <tr className="bg-gray-100 text-left">
-              <th className="px-4 py-2 text-sm font-semibold text-gray-700">الاسم</th>
-              <th className="px-4 py-2 text-sm font-semibold text-gray-700">الموقع</th>
-              <th className="px-4 py-2 text-sm font-semibold text-gray-700">السعر بالساعة</th>
-              <th className="px-4 py-2 text-sm font-semibold text-gray-700">الإجراءات</th>
-            </tr>
-          </thead>
-          <tbody>
-            {stadiums.map((stadium) => (
-              <tr key={stadium.id} className="border-b border-gray-200 hover:bg-gray-50">
-                <td className="px-4 py-2 text-sm text-gray-700">{stadium.name}</td>
-                <td className="px-4 py-2 text-sm text-gray-700">{stadium.location}</td>
-                <td className="px-4 py-2 text-sm text-gray-700">{stadium.hourlyPrice} ₪</td>
-                <td className="px-4 py-2 text-sm text-center">
-                  <button
-                    onClick={() => handleApprove(stadium.id)}
-                    className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 focus:outline-none"
-                  >
-                    موافقة
-                  </button>
-                  <button
-                    onClick={() => handleReject(stadium.id)}
-                    className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 focus:outline-none ml-2"
-                  >
-                    رفض
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <div dir="rtl">
+        <h2
+            className="p-3 mb-10 text-xl"
+        >
+          يرجى مراجعة الطلبات واتخاذ الإجراء المناسب:
+        </h2>
+        <div className="space-y-4 min-w-[70rem]">
+          {stadiums.map((stadium) => (
+                <div
+                    key={stadium.id}
+                    className="bg-white shadow-lg rounded-lg p-4 flex justify-between items-center"
+                >
+                  {/* Content */}
+                  <div>
+                    <h2 className="text-lg font-semibold text-gray-800">{stadium.name}</h2>
+                    <p className="text-sm text-gray-600">
+                      الموقع: {stadium.location}
+                    </p>
+                    <p className="text-sm text-gray-600">
+                      السعر بالساعة: {stadium.hourlyPrice} ₪
+                    </p>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex space-x-2">
+                    <button
+                        onClick={() => handleApprove(stadium.id)}
+                        className="px-4 py-2 ml-4 bg-mainColor text-white rounded-md hover:bg-green-600 focus:outline-none"
+                    >
+                      موافقة
+                    </button>
+                    <button
+                        onClick={() => handleReject(stadium.id)}
+                        className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 focus:outline-none"
+                    >
+                      رفض
+                    </button>
+                  </div>
+                </div>
+          ))}
+        </div>
       </div>
-    </div>
   );
 };
 
