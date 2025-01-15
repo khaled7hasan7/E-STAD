@@ -56,7 +56,7 @@ const authService = {
 
     registerCustomer: async (user) => {
         try {
-            const { accessToken } = getAuthData();
+            const { accessToken } = authService.getAuthData();
             setAuthToken(accessToken); // Attach token
             const response = await apiClient.post("/register-customer", user);
             return response.data;
@@ -69,7 +69,7 @@ const authService = {
     registerOwner: async (user) => {
         try {
             console.log("WOROOD ASSI IS YOUR UNCLE");
-            const { accessToken } = getAuthData();
+            const { accessToken } = authService.getAuthData();
             setAuthToken(accessToken); // Attach token
             const response = await apiClient.post("/register-owner", user);
             return response.data;
@@ -81,7 +81,7 @@ const authService = {
 
     registerAdmin: async (user) => {
         try {
-            const { accessToken } = getAuthData();
+            const { accessToken } = authService.getAuthData();
             setAuthToken(accessToken); // Attach token
             const response = await apiClient.post("/register-admin", user);
             return response.data;
@@ -93,7 +93,7 @@ const authService = {
 
     getUser: async () => {
         try {
-            const { accessToken } = getAuthData();
+            const { accessToken } = authService.getAuthData();
             setAuthToken(accessToken); // Attach token
             const response = await apiClient.get("/getUser");
             return response.data;
