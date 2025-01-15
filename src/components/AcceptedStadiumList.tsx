@@ -19,6 +19,8 @@ interface Stadium {
     status: string; // 'PENDING', 'ACCEPTED', or 'REJECTED'
     ownerId: string;
     adminId: string | null;
+    ownerName?: string; // Add owner's name for display
+    ownerContact?: string; // Add owner's contact info
 }
 
 const AcceptedStadiumList: React.FC = () => {
@@ -26,6 +28,8 @@ const AcceptedStadiumList: React.FC = () => {
     const navigate = useNavigate(); // Initialize useNavigate for navigation
     const [stadiums, setStadiums] = useState<Stadium[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
+    const [selectedStadium, setSelectedStadium] = useState<Stadium | null>(null); // State for selected stadium
+    const [showPopup, setShowPopup] = useState<boolean>(false); // State for popup visibility
 
     useEffect(() => {
         const fetchAcceptedStadiums = async () => {
@@ -57,6 +61,21 @@ const AcceptedStadiumList: React.FC = () => {
         } catch (error) {
             console.error(`Error canceling stadium with ID: ${stadiumId}`, error);
         }
+    };
+
+    const handleViewDetails = async (stadiumId: string) => {
+        try {
+            const data = await adminService.getStadiumWithOwner(stadiumId); // Fetch stadium details by ID
+            setSelectedStadium(data); // Set the selected stadium for display
+            setShowPopup(true); // Show the popup
+        } catch (error) {
+            console.error("Error fetching stadium details:", error);
+        }
+    };
+
+    const handleClosePopup = () => {
+        setShowPopup(false);
+        setSelectedStadium(null); // Reset the selected stadium
     };
 
     if (loading) {
@@ -93,9 +112,7 @@ const AcceptedStadiumList: React.FC = () => {
                             </td>
                             <td className="px-6 py-4 text-sm text-center flex gap-4 justify-center">
                                 <button
-                                    onClick={() =>
-                                        console.log(`Viewing stadium with ID: ${stadium.id}`)
-                                    }
+                                    onClick={() => handleViewDetails(stadium.id)}
                                     className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition focus:outline-none"
                                 >
                                     عرض التفاصيل
@@ -112,8 +129,53 @@ const AcceptedStadiumList: React.FC = () => {
                     </tbody>
                 </table>
             </div>
+
+            {/* Popup for stadium details */}
+            {showPopup && selectedStadium && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+                    <div className="bg-white p-6 rounded-lg shadow-lg w-[30rem] space-y-4">
+                        <h2 className="text-2xl font-bold text-gray-800">تفاصيل الملعب</h2>
+                        <div className="space-y-2">
+                            <p><strong>الاسم:</strong> {selectedStadium.stadium.name}</p>
+                            <p><strong>الموقع:</strong> {selectedStadium.stadium.location}</p>
+                            <p><strong>السعر بالساعة:</strong> {selectedStadium.stadium.hourlyPrice} ₪</p>
+                            <p><strong>الطول:</strong> {selectedStadium.stadium.length} متر</p>
+                            <p><strong>العرض:</strong> {selectedStadium.stadium.width} متر</p>
+                            <p><strong>الإنارة:</strong> {selectedStadium.stadium.hasLighting ? "نعم" : "لا"}</p>
+                            <p><strong>الكرات:</strong> {selectedStadium.stadium.hasBalls ? "نعم" : "لا"}</p>
+                            <p><strong>عدد اللاعبين:</strong> {selectedStadium.stadium.numberOfPlayers}</p>
+                            <p><strong>ملاحظات:</strong> {selectedStadium.stadium.remarks || "لا توجد ملاحظات"}</p>
+                            <p><strong>صور إضافية:</strong></p>
+                            <div className="grid grid-cols-2 gap-2">
+                                {selectedStadium.stadium.additionalImages.map((image, index) => (
+                                    <img
+                                        key={index}
+                                        src={image}
+                                        alt={`Additional Image ${index + 1}`}
+                                        className="rounded-lg border shadow"
+                                    />
+                                ))}
+                            </div>
+                            <h3 className="text-xl font-semibold mt-4">تفاصيل المالك</h3>
+                            <p><strong>الاسم الكامل:</strong> {selectedStadium.owner.fullName}</p>
+                            <p><strong>رقم الهاتف:</strong> {selectedStadium.owner.phoneNumber}</p>
+                            <p><strong>البريد الإلكتروني:</strong> {selectedStadium.owner.emailAddress}</p>
+                            <p><strong>تاريخ الميلاد:</strong> {new Date(selectedStadium.owner.birthDate).toLocaleDateString()}</p>
+                        </div>
+                        <div className="flex justify-end">
+                            <button
+                                onClick={handleClosePopup}
+                                className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition focus:outline-none"
+                            >
+                                إغلاق
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
+
 };
 
 export default AcceptedStadiumList;
