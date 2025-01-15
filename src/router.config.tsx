@@ -14,6 +14,12 @@ const isAuthenticated = () => {
     return !!token; // Return true if a token exists, otherwise false
 };
 
+// Get a unique user key
+const getUserKey = () => {
+    const token = localStorage.getItem("authToken");
+    return token ? `user-${token}` : "guest";
+};
+
 // Protected Route Wrapper
 const ProtectedRoute = ({ element }: { element: JSX.Element }) => {
     return isAuthenticated() ? element : <Navigate to="/login" />;
@@ -23,9 +29,9 @@ const AppRouter = () => {
     const router = createBrowserRouter([
         {
             path: "/",
-            element: <RootLayout />,
+            element: <RootLayout key={getUserKey()} />, // Add key here to force re-mount
             children: [
-                { index: true, element: <HomePage /> },
+                { index: true, element: <HomePage key={getUserKey()} /> }, // Add key here to force re-mount
                 {
                     path: "login",
                     element: <LoginPage />,
@@ -53,8 +59,9 @@ const AppRouter = () => {
                 {
                     path: "dashboard",
                     element: (
-                        // <ProtectedRoute element={<Dashboard />} />
-                        <ProtectedRoute element={<HomePage />} />
+                        <ProtectedRoute
+                            element={<HomePage key={getUserKey()} />} // Add key here to force re-mount
+                        />
                     ), // Protect the dashboard route
                 },
             ],

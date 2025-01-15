@@ -22,6 +22,60 @@ const HomePage: React.FC = () => {
     const [Schedules, setSchedules] = useState([]); // State for hourly availability
     const [loading, setLoading] = useState<boolean>(false); // Loading state
     const [reservedSlots, setReservedSlots] = useState([]);
+    const [isDataFetched, setIsDataFetched] = useState<boolean>(false);
+
+    // Fetch stadiums when the user is authenticated
+    useEffect(() => {
+        if (isAuthenticated && !isDataFetched) {
+            const fetchStadiums = async () => {
+                try {
+                    const response = await stadiumService.getAllStadiums();
+                    setStadiums(response);
+                    if (response.length > 0) {
+                        setSelectedStadium(response[0].id); // Automatically select the first stadium
+                    }
+                } catch (error) {
+                    console.error("Error fetching stadiums:", error);
+                } finally {
+                    setIsDataFetched(true);
+                }
+            };
+
+            fetchStadiums();
+        } else if (!isAuthenticated) {
+            // Reset state when user logs out
+            resetState();
+        }
+    }, [isAuthenticated, isDataFetched]);
+
+    const resetState = () => {
+        setCurrentWeek(new Date());
+        setSelectedDate(new Date());
+        setSelectedStadium(null);
+        setStadiums([]);
+        setHourlyAvailability([]);
+        setReservedSlots([]);
+        setLoading(false);
+        setIsDataFetched(false);
+    };
+    // useEffect(() => {
+    //     if (!isAuthenticated) {
+    //         // Reset states when the user logs out
+    //         setCurrentWeek(new Date());
+    //         setSelectedDate(new Date());
+    //         setSelectedStadium(null);
+    //         setStadiums([]);
+    //         setHourlyAvailability([]);
+    //         setSchedules([]);
+    //         setReservedSlots([]);
+    //         setCancelReason("");
+    //         setShowCancelModal(false);
+    //         setSelectedBooking(null);
+    //         setLoading(false);
+    //     }
+    // }, [isAuthenticated]);
+    //
+
 
     useEffect(() => {
         // Fetch stadiums when the component mounts
@@ -48,10 +102,12 @@ const HomePage: React.FC = () => {
             setLoading(true);
             try {
                 const date = format(selectedDate, "yyyy-MM-dd"); // Format the selected date
+                console.log("fetching availability for:",selectedStadium);
                 const availability = await stadiumScheduleService.getHourlyAvailability(selectedStadium, date);
 
                 const processedAvailability: string[] = [];
                 const reservations: { summary: string; details: string[] }[] = [];
+                console.log("availability:",availability)
 
                 availability.forEach((slot, index) => {
                     if (slot.includes("(Reserved)")) {
@@ -75,7 +131,6 @@ const HomePage: React.FC = () => {
                         processedAvailability.push(slot);
                     }
                 });
-
                 setHourlyAvailability(processedAvailability);
                 setReservedSlots(reservations);
 
@@ -91,7 +146,7 @@ const HomePage: React.FC = () => {
         };
 
         fetchHourlyAvailability();
-    }, [selectedDate, selectedStadium]);
+    }, [isAuthenticated,selectedDate, selectedStadium]);
 
     // Get the start of the week
     const getWeekDates = (week: Date) => {
@@ -126,7 +181,7 @@ const HomePage: React.FC = () => {
 
     return (
         <>
-            {role === "OWNER" ? (
+            {role !== "OWNER" ? (
                 <AcceptedStadiumList />
             ) : (
                 <div className="p-6 mx-auto">
@@ -137,23 +192,21 @@ const HomePage: React.FC = () => {
                                 <h2 className="text-xl font-bold text-gray-700 mb-4">اختر الملعب:</h2>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                                     {stadiums.map((stadium) => (
-                                        <div
+                                        <button
                                             key={stadium.id}
                                             onClick={() => setSelectedStadium(stadium.id)}
-                                            className={`cursor-pointer p-4 border rounded-lg shadow-md ${
+                                            className={`cursor-pointer p-4 border rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-green-500 ${
                                                 selectedStadium === stadium.id
                                                     ? "bg-green-500 text-white"
                                                     : "bg-gray-100 hover:bg-gray-200"
                                             }`}
+                                            aria-pressed={selectedStadium === stadium.id}
                                         >
                                             <h3 className="text-lg font-semibold">{stadium.name}</h3>
-                                            <p className="text-sm text-gray-600">
-                                                الموقع: {stadium.location}
-                                            </p>
-                                            <p className="text-sm text-gray-600">
-                                                سعر الساعة: {stadium.hourlyPrice} ₪
-                                            </p>
-                                        </div>
+                                            <p className="text-sm text-gray-600">الموقع: {stadium.location}</p>
+                                            <p className="text-sm text-gray-600">سعر الساعة: {stadium.hourlyPrice} ₪</p>
+                                        </button>
+
                                     ))}
                                 </div>
                             </div>
@@ -162,9 +215,9 @@ const HomePage: React.FC = () => {
                             <div className="text-center mb-6">
                                 <h2
                                     className="text-3xl font-bold text-gray-800"
-                                    style={{ textShadow: "2px 2px 4px rgba(0, 0, 0, 0.3)" }}
+                                    style={{textShadow: "2px 2px 4px rgba(0, 0, 0, 0.3)"}}
                                 >
-                                    {`${format(currentWeek, "MMMM yyyy", { locale: ar })}`}
+                                    {`${format(currentWeek, "MMMM yyyy", {locale: ar})}`}
                                 </h2>
                             </div>
 
@@ -178,24 +231,25 @@ const HomePage: React.FC = () => {
                                 </button>
 
                                 <div className="flex gap-10">
-                                    {weekDates.map((date, index) => (
-                                        <div
-                                            key={index}
+                                    {weekDates.map((date) => (
+                                        <button
+                                            key={date.toISOString()} // Use a unique string representation of the date
                                             onClick={() => setSelectedDate(date)}
-                                            className={`flex flex-col items-center justify-center w-20 h-14 rounded-lg cursor-pointer shadow ${
-                                                format(date, "yyyy-MM-dd") ===
-                                                format(selectedDate, "yyyy-MM-dd")
+                                            className={`flex flex-col items-center justify-center w-20 h-14 rounded-lg shadow focus:outline-none focus:ring-2 focus:ring-green-500 ${
+                                                format(date, "yyyy-MM-dd") === format(selectedDate, "yyyy-MM-dd")
                                                     ? "bg-green-500 text-white"
                                                     : "bg-gray-100 hover:bg-gray-200"
                                             }`}
+                                            aria-pressed={format(date, "yyyy-MM-dd") === format(selectedDate, "yyyy-MM-dd")}
                                         >
                                             <span className="text-sm font-medium">
-                                                {format(date, "EEEE", { locale: ar }).slice(0, 10)}
+                                                {format(date, "EEEE", {locale: ar}).slice(0, 10)}
                                             </span>
                                             <span className="text-lg font-bold">{format(date, "d")}</span>
-                                        </div>
+                                        </button>
                                     ))}
                                 </div>
+
                                 <button
                                     onClick={handlePrevWeek}
                                     className={btnWeekStyle}
@@ -209,9 +263,9 @@ const HomePage: React.FC = () => {
                                 {loading ? (
                                     <p className="text-center text-gray-500">جاري التحميل...</p>
                                 ) : hourlyAvailability.length > 0 ? (
-                                    hourlyAvailability.map((availability, index) => (
+                                    hourlyAvailability.map((availability) => (
                                         <div
-                                            key={index}
+                                            key={availability} // Use the value of availability as the key
                                             className="border border-green-500 rounded-lg p-4 bg-gray-50 flex items-center justify-between shadow-md"
                                         >
                                             <p className="text-gray-700">{availability}</p>
@@ -222,9 +276,11 @@ const HomePage: React.FC = () => {
                                 )}
                             </div>
 
+
                             {/* Cancel Modal */}
                             {showCancelModal && (
-                                <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+                                <div
+                                    className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
                                     <div className="bg-white p-6 rounded-lg shadow-lg w-96 space-y-4">
                                         <h2 className="text-xl font-semibold text-red-600 text-center">إلغاء الحجز</h2>
                                         <textarea
@@ -252,7 +308,7 @@ const HomePage: React.FC = () => {
                             )}
                         </>
                     ) : (
-                        <LoginPage />
+                        <LoginPage/>
                     )}
                 </div>
             )}

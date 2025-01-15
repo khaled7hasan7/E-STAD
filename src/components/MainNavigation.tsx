@@ -52,14 +52,18 @@ const MainNavigation: React.FC<MainNavigationProps> = ({menuItems}) => {
                             isEnd={menuItem.isEnd}
                         />
                     ))}
-                    <div className="flex gap-2">
-                        <button 
-                            onClick={() => logout()} 
-                            className='rounded-md bg-mainColor ml-2 px-3 py-2 text-base font-medium text-white hover:bg-opacity-80 dark:bg-mainColor dark:text-white dark:hover:bg-opacity-80'
-                        >
-                            تسجيل خروج
-                        </button>
-                    </div>
+                        <div className="flex gap-2">
+                            <button
+                                onClick={() => {
+                                    logout();
+                                    navigate('/'); // Redirect to the homepage after logout
+                                }}
+                                className='rounded-md bg-mainColor ml-2 px-3 py-2 text-base font-medium text-white hover:bg-opacity-80 dark:bg-mainColor dark:text-white dark:hover:bg-opacity-80'
+                            >
+                                تسجيل خروج
+                            </button>
+
+                        </div>
                     </>
                     }
                 </ul>

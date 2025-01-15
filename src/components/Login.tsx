@@ -20,6 +20,7 @@ const LoginPage: React.FC = () => {
   });
 
   const [loginError, setLoginError] = useState<string | null>(null);
+  const [isProcessing, setIsProcessing] = useState(false); // State for handling processing
 
   function handleChange(e: ChangeEvent<HTMLInputElement>) {
     const { name, value, type, checked } = e.target;
@@ -47,6 +48,8 @@ const LoginPage: React.FC = () => {
 
     if (Object.keys(newErrors).length === 0) {
       try {
+        setIsProcessing(true); // Set processing state
+
         // Call the authService to log in
         const loginDTO = {
           contactInfo: formData.email,
@@ -55,20 +58,32 @@ const LoginPage: React.FC = () => {
         const response = await authService.login(loginDTO);
 
         const token = response.token; // Assuming the token is in the response
+        const userRole = response.Role; // Assuming Role is part of the response
 
         // Use login from AuthContext to handle authentication logic
-        login(token, response.Role, formData.rememberMe);
-        navigate('/');
+        login(token, userRole, formData.rememberMe);
 
+        // Navigate based on the role after ensuring role is updated
+        setTimeout(() => {
+          if (userRole === "ADMIN") {
+            navigate("/adminNoti");
+          } else if (userRole === "OWNER") {
+            navigate("/");
+          } else {
+            navigate("/");
+          }
+        }, 0); // Allow AuthContext to update
       } catch (error: any) {
         console.error("Login failed:", error);
         setLoginError("تسجيل الدخول فشل. الرجاء التحقق من البيانات.");
+      } finally {
+        setIsProcessing(false); // Reset processing state
       }
     }
   }
 
   return (
-      <div className="flex mt-8  border border-3 border-mainColor rounded-3xl">
+      <div className="flex mt-8 border border-3 border-mainColor rounded-3xl">
         <div className="relative rounded-l-3xl overflow-hidden">
           <div
               className="absolute inset-0 bg-cover bg-center"
@@ -84,11 +99,7 @@ const LoginPage: React.FC = () => {
 
         <div className="bg-white flex flex-col justify-center items-center p-12 rounded-r-3xl">
           <h1 className="text-3xl font-bold mb-6 text-mainColor">تسجيل الدخول</h1>
-          <form
-              ref={form}
-              onSubmit={handleSubmit}
-              className="w-full max-w-sm space-y-4"
-          >
+          <form ref={form} onSubmit={handleSubmit} className="w-full max-w-sm space-y-4">
             {/* Email */}
             <div>
               <input
@@ -99,9 +110,7 @@ const LoginPage: React.FC = () => {
                   placeholder="البريد الإلكتروني"
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
               />
-              {errors.email && (
-                  <p className="text-red-500 text-xs">{errors.email}</p>
-              )}
+              {errors.email && <p className="text-red-500 text-xs">{errors.email}</p>}
             </div>
 
             {/* Password */}
@@ -114,9 +123,7 @@ const LoginPage: React.FC = () => {
                   placeholder="كلمة السر"
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
               />
-              {errors.password && (
-                  <p className="text-red-500 text-xs">{errors.password}</p>
-              )}
+              {errors.password && <p className="text-red-500 text-xs">{errors.password}</p>}
             </div>
 
             {/* Remember Me */}
@@ -138,14 +145,13 @@ const LoginPage: React.FC = () => {
             <button
                 type="submit"
                 className="w-full bg-mainColor text-white py-2 rounded-md hover:bg-green-700 transition duration-300"
+                disabled={isProcessing}
             >
-              تسجيل الدخول
+              {isProcessing ? "جاري المعالجة..." : "تسجيل الدخول"}
             </button>
           </form>
 
-          {loginError && (
-              <p className="text-red-500 text-sm mt-4">{loginError}</p>
-          )}
+          {loginError && <p className="text-red-500 text-sm mt-4">{loginError}</p>}
 
           {/* Forgot Password Link */}
           <p className="mt-4 text-mainColor">

@@ -1,17 +1,18 @@
 /** @type {import('tailwindcss').Config} */
 export default {
   darkMode: 'class',
-  content: [ 
+  content: [
     "./src/**/*.{html,js,jsx,ts,tsx}",
-    "./public/index.html"
+    "./public/index.html",
   ],
   theme: {
     extend: {
       colors: {
-        mainColor: "#096235",
+        mainColor: "#096235", // Main green color for your app
       },
     },
   },
-  plugins: [],
+  plugins: [
+    require('@tailwindcss/forms'), // Optional: Ensures better styling for forms
+  ],
 }
-
