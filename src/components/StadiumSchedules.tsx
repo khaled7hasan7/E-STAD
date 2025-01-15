@@ -22,9 +22,9 @@ const StadiumSchedules: React.FC<StadiumSchedulesProps> = ({ schedules, onDefine
     return (
         <div dir="rtl"> {/* Ensure RTL layout */}
             {/* Schedules Section */}
-            <h3 className="text-md font-bold mb-4 text-right">الجدول الزمني:</h3>
+            <h3 className="text-2xl font-bold mb-4 mt-7 px-5 text-right">الجدول الزمني:</h3>
             {schedules.length > 0 ? (
-                <div className="space-y-4">
+                <div className="space-y-4 mx-8">
                     {schedules.map((schedule) => (
                         <div
                             key={schedule.id}
@@ -65,7 +65,7 @@ const StadiumSchedules: React.FC<StadiumSchedulesProps> = ({ schedules, onDefine
             <div className="mt-4 text-center">
                 <button
                     onClick={onDefineSchedule}
-                    className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+                    className="px-4 py-2 my-6 bg-mainColor text-white rounded-md hover:bg-blue-800"
                 >
                     إضافة جدول جديد
                 </button>

@@ -68,6 +68,8 @@ const SignupPage: React.FC = () => {
           // roles: ["CUSTOMER"], // Default role for signup
         };
 
+        
+        console.table(user);
         const response = await authService.registerOwner(user); // Call authService
 
         setSuccessMessage("تم إنشاء الحساب بنجاح! يمكنك تسجيل الدخول الآن.");

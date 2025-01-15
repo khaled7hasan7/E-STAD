@@ -167,9 +167,11 @@ const StadiumPage: React.FC = () => {
     if (errorMessage) return <p className="text-red-500 text-center">{errorMessage}</p>;
     if (!stadiumData) return <p>لا توجد بيانات ملعب للعرض.</p>;
 
+    const labelStyle="block text-lg my-3";
+
     return (
-        <div className="p-6 bg-red-500 rounded-md shadow-md my-5 px-52">
-            <h2 className="text-lg font-bold text-center">تفاصيل الملعب الخاص بك:</h2>
+        <div className="p-6rounded-md shadow-xl px-5 my-5">
+        <h1 className="text-4xl font-black text-center">تفاصيل الملعب الخاص بك:</h1>
 
             {/* Stadium Details */}
             <StadiumDetails
@@ -189,7 +191,7 @@ const StadiumPage: React.FC = () => {
 
             {/* Save/Cancel Buttons */}
             {isEditing ? (
-                <div className="text-center space-x-4">
+                <div className="px-10 py-10 space-x-5">
                     <button onClick={handleSave}
                             className="bg-green-500 text-white px-6 py-2 rounded-md hover:bg-green-600">
                         حفظ
@@ -204,7 +206,7 @@ const StadiumPage: React.FC = () => {
             ) : (
                 <button
                     onClick={() => setIsEditing(true)}
-                    className="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600"
+                    className="px-4 py-2 my-6 bg-mainColor text-white rounded-md hover:bg-blue-800"
                 >
                     تعديل
                 </button>
@@ -212,11 +214,11 @@ const StadiumPage: React.FC = () => {
 
             {/* Define Schedule Modal */}
             {isScheduleModalOpen && (
-                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                    <div className="bg-white p-6 rounded-lg shadow-lg space-y-4 max-w-lg">
+                <div dir="rtl" className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                    <div className="bg-white p-6 rounded-lg shadow-lg space-y-4 w-[50rem]">
                         <h3 className="text-lg font-bold text-center">إضافة جدول زمني جديد</h3>
-                        <div>
-                            <label className="block text-sm">الأيام:</label>
+                        <div className="">
+                            <label className={labelStyle}>الأيام:</label>
                             <select
                                 name="daysOfWeek"
                                 multiple
@@ -233,7 +235,7 @@ const StadiumPage: React.FC = () => {
                             </select>
                         </div>
                         <div>
-                            <label className="block text-sm">وقت البدء:</label>
+                            <label className={labelStyle}>وقت البدء:</label>
                             <input
                                 type="time"
                                 name="startTime"
@@ -243,7 +245,7 @@ const StadiumPage: React.FC = () => {
                             />
                         </div>
                         <div>
-                            <label className="block text-sm">وقت الانتهاء:</label>
+                            <label className={labelStyle}>وقت الانتهاء:</label>
                             <input
                                 type="time"
                                 name="endTime"
@@ -253,7 +255,7 @@ const StadiumPage: React.FC = () => {
                             />
                         </div>
                         <div>
-                            <label className="block text-sm">من تاريخ:</label>
+                            <label className={labelStyle}>من تاريخ:</label>
                             <input
                                 type="date"
                                 name="fromDate"
@@ -262,8 +264,8 @@ const StadiumPage: React.FC = () => {
                                 className="w-full px-3 py-2 border border-gray-300 rounded-md"
                             />
                         </div>
-                        <div>
-                            <label className="block text-sm">إلى تاريخ:</label>
+                        <div className=" text-right">
+                            <label className={labelStyle}>إلى تاريخ:</label>
                             <input
                                 type="date"
                                 name="toDate"
@@ -275,7 +277,7 @@ const StadiumPage: React.FC = () => {
                         <div className="flex justify-end space-x-4">
                             <button
                                 onClick={() => setIsScheduleModalOpen(false)}
-                                className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
+                                className="ml-5 px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
                             >
                                 إلغاء
                             </button>

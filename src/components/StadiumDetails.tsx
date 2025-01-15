@@ -23,6 +23,8 @@ interface StadiumDetailsProps {
     onAdditionalImagesChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
+const colStyle = "grid grid-cols-[500px_500px] gap-20 mt-10 px-5";
+
 const StadiumDetails: React.FC<StadiumDetailsProps> = ({
                                                             stadiumData,
                                                             isEditing,
@@ -32,9 +34,9 @@ const StadiumDetails: React.FC<StadiumDetailsProps> = ({
                                                             onAdditionalImagesChange,
                                                         }) => {
     return (
-        <div dir="rtl" className="bg-green-400 px-36">
+        <div dir="rtl" className="">
             {/* Stadium Name & Location */}
-            <div className="grid grid-cols-2 gap-20 mt-10">
+            <div className={colStyle}>
                 <div className="">
                     <label className="block text-sm mb-2 text-right">اسم الملعب</label>
                     <input
@@ -60,7 +62,7 @@ const StadiumDetails: React.FC<StadiumDetailsProps> = ({
             </div>
 
             {/* Hourly Price & Number of Players */}
-            <div className="grid grid-cols-2 gap-4 mt-4">
+            <div className={colStyle}>
                 <div>
                     <label className="block text-sm mb-2 text-right">سعر الساعة</label>
                     <input
@@ -86,7 +88,7 @@ const StadiumDetails: React.FC<StadiumDetailsProps> = ({
             </div>
 
             {/* Length & Width */}
-            <div className="grid grid-cols-2 gap-4 mt-4">
+            <div className={colStyle}>
                 <div>
                     <label className="block text-sm mb-2 text-right">طول الملعب</label>
                     <input
@@ -112,7 +114,7 @@ const StadiumDetails: React.FC<StadiumDetailsProps> = ({
             </div>
 
             {/* Features */}
-            <div className="grid grid-cols-2 gap-4 mt-4">
+            <div className={colStyle}>
                 <div className="flex items-center justify-end">
                     <label className="mr-2 text-sm text-right">إضاءة</label>
                     <input
@@ -138,8 +140,8 @@ const StadiumDetails: React.FC<StadiumDetailsProps> = ({
             </div>
 
             {/* Remarks */}
-            <div className="mt-4">
-                <label className="block text-sm mb-2 text-right">ملاحظات</label>
+            <div className="mt-4 px-5">
+                <label className="block text-2xl mt-3 mb-2 text-right">ملاحظات</label>
                 <textarea
                     name="remarks"
                     value={stadiumData.remarks}
@@ -150,8 +152,8 @@ const StadiumDetails: React.FC<StadiumDetailsProps> = ({
             </div>
 
             {/* Main Image */}
-            <div className="mt-4">
-                <label className="block text-sm mb-2 text-right">الصورة الرئيسية</label>
+            <div className="mt-4 px-5">
+                <label className="block text-2xl mb-2 text-right">الصورة الرئيسية</label>
                 <input
                     type="file"
                     name="mainImage"
@@ -163,8 +165,8 @@ const StadiumDetails: React.FC<StadiumDetailsProps> = ({
             </div>
 
             {/* Additional Images */}
-            <div className="mt-4">
-                <label className="block text-sm mb-2 text-right">صور إضافية</label>
+            <div className="mt-4 px-5">
+                <label className="block text-2xl mb-2 text-right">صور إضافية</label>
                 <input
                     type="file"
                     name="additionalImages"
