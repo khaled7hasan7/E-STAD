@@ -134,18 +134,28 @@ const HomePage: React.FC = () => {
                         <>
                             {/* Select Stadium */}
                             <div className="mb-6">
-                                <label className="block text-sm font-medium text-gray-700 mb-2">اختر الملعب:</label>
-                                <select
-                                    value={selectedStadium || ""}
-                                    onChange={(e) => setSelectedStadium(e.target.value)}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-green-500"
-                                >
+                                <h2 className="text-xl font-bold text-gray-700 mb-4">اختر الملعب:</h2>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                                     {stadiums.map((stadium) => (
-                                        <option key={stadium.id} value={stadium.id}>
-                                            {stadium.name}
-                                        </option>
+                                        <div
+                                            key={stadium.id}
+                                            onClick={() => setSelectedStadium(stadium.id)}
+                                            className={`cursor-pointer p-4 border rounded-lg shadow-md ${
+                                                selectedStadium === stadium.id
+                                                    ? "bg-green-500 text-white"
+                                                    : "bg-gray-100 hover:bg-gray-200"
+                                            }`}
+                                        >
+                                            <h3 className="text-lg font-semibold">{stadium.name}</h3>
+                                            <p className="text-sm text-gray-600">
+                                                الموقع: {stadium.location}
+                                            </p>
+                                            <p className="text-sm text-gray-600">
+                                                سعر الساعة: {stadium.hourlyPrice} ₪
+                                            </p>
+                                        </div>
                                     ))}
-                                </select>
+                                </div>
                             </div>
 
                             {/* Month Display */}
