@@ -139,6 +139,25 @@ const stadiumScheduleService = {
             throw error;
         }
     },
+
+    // Cancel a reservation by ID
+    async cancelReservation(reservationId) {
+        try {
+            const { accessToken } = authService.getAuthData();
+            if (!accessToken) throw new Error("User is not authenticated");
+
+            const response = await axios.put(`${BASE_URL}/cancel-reservation/${reservationId}`, {}, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
+
+            return response.data;
+        } catch (error) {
+            console.error("Error in cancelReservation:", error);
+            throw error;
+        }
+    },
 };
 
 export default stadiumScheduleService;

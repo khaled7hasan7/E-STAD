@@ -104,11 +104,12 @@ const HomePage: React.FC = () => {
             setLoading(true);
             try {
                 const date = format(selectedDate, "yyyy-MM-dd"); // Format the selected date
-                console.log("fetching availability for:",selectedStadium);
+                console.log("fetching availability for:", selectedStadium);
                 const availability = await stadiumScheduleService.getHourlyAvailability(selectedStadium, date);
 
                 const processedAvailability: { slot: string; userDetails?: any }[] = [];
                 const userIdsToFetch: string[] = [];
+                const reservationIdMap: Record<string, string> = {}; // Map to store reservation IDs by userId
 
                 availability.forEach((line, index) => {
                     if (line.includes("(Available)")) {
@@ -117,15 +118,35 @@ const HomePage: React.FC = () => {
                     } else if (line.includes("(Reserved)")) {
                         // Add the reserved slot
                         processedAvailability.push({ slot: line });
+                    } else if (line.trim().startsWith("Reservation ID:")) {
+                        // Extract the reservation ID
+                        const reservationId = line.trim().split(":")[1].trim();
+
+                        // Attach reservation ID to the last reserved slot
+                        const lastReservedSlot = processedAvailability[processedAvailability.length - 1];
+                        if (lastReservedSlot) {
+                            lastReservedSlot.userDetails = {
+                                ...lastReservedSlot.userDetails,
+                                reservationId, // Add reservation ID
+                            };
+                        }
                     } else if (line.trim().startsWith("User ID:")) {
                         // Extract the user ID and prepare for fetching user details
                         const userId = line.trim().split(":")[1].trim();
                         userIdsToFetch.push(userId);
 
-                        // Attach a placeholder for user details to match the reserved slot
+                        // Map the reservation ID to the user ID
                         const lastReservedSlot = processedAvailability[processedAvailability.length - 1];
+                        if (lastReservedSlot?.userDetails?.reservationId) {
+                            reservationIdMap[userId] = lastReservedSlot.userDetails.reservationId;
+                        }
+
+                        // Attach a placeholder for user details to match the reserved slot
                         if (lastReservedSlot) {
-                            lastReservedSlot.userDetails = { userId }; // Placeholder with userId
+                            lastReservedSlot.userDetails = {
+                                ...lastReservedSlot.userDetails,
+                                userId, // Placeholder with userId
+                            };
                         }
                     }
                 });
@@ -141,21 +162,24 @@ const HomePage: React.FC = () => {
                     }
                 }
 
-                // Populate user details in processed availability
+                // Populate user details and reservation ID in processed availability
                 processedAvailability.forEach((slot) => {
-                    if (slot.userDetails && userDetailsMap[slot.userDetails.userId]) {
-                        slot.userDetails = userDetailsMap[slot.userDetails.userId];
+                    if (slot.userDetails) {
+                        const userId = slot.userDetails.userId;
+                        if (userId) {
+                            slot.userDetails = {
+                                ...slot.userDetails,
+                                ...userDetailsMap[userId], // Merge user details
+                                reservationId: reservationIdMap[userId], // Add reservation ID
+                            };
+                        }
                     }
                 });
                 setHourlyAvailability(processedAvailability);
-                // setReservedSlots(reservations);
-
                 console.log("Processed Availability:", processedAvailability);
-                // console.log("Reserved Slots:", reservations);
             } catch (error) {
                 console.error("Error fetching hourly availability:", error);
                 setHourlyAvailability([]);
-                // setReservedSlots([]);
             } finally {
                 setLoading(false);
             }
@@ -195,6 +219,88 @@ const HomePage: React.FC = () => {
     };
 
     const btnWeekStyle = "bg-mainColor text-white font-medium text-sm  mx-4 rounded-lg h-10 px-4 py-2 hover:bg-mainColor/60";
+
+    const handleCancelReservation = async (reservationId: string) => {
+        try {
+            await stadiumScheduleService.cancelReservation(reservationId);
+            alert("Reservation canceled successfully");
+
+            // Refresh availability after canceling
+            if (selectedStadium) {
+                const date = format(selectedDate, "yyyy-MM-dd"); // Format the selected date
+                const availability = await stadiumScheduleService.getHourlyAvailability(selectedStadium, date);
+
+                const processedAvailability: { slot: string; userDetails?: any }[] = [];
+                const userIdsToFetch: string[] = [];
+                const reservationIdMap: Record<string, string> = {};
+
+                availability.forEach((line, index) => {
+                    if (line.includes("(Available)")) {
+                        // Handle available slots
+                        processedAvailability.push({ slot: line });
+                    } else if (line.includes("(Reserved)")) {
+                        // Add the reserved slot
+                        processedAvailability.push({ slot: line });
+                    } else if (line.trim().startsWith("Reservation ID:")) {
+                        const extractedReservationId = line.trim().split(":")[1].trim();
+
+                        const lastReservedSlot = processedAvailability[processedAvailability.length - 1];
+                        if (lastReservedSlot) {
+                            lastReservedSlot.userDetails = {
+                                ...lastReservedSlot.userDetails,
+                                reservationId: extractedReservationId, // Add reservation ID
+                            };
+                        }
+                    } else if (line.trim().startsWith("User ID:")) {
+                        const userId = line.trim().split(":")[1].trim();
+                        userIdsToFetch.push(userId);
+
+                        const lastReservedSlot = processedAvailability[processedAvailability.length - 1];
+                        if (lastReservedSlot?.userDetails?.reservationId) {
+                            reservationIdMap[userId] = lastReservedSlot.userDetails.reservationId;
+                        }
+
+                        if (lastReservedSlot) {
+                            lastReservedSlot.userDetails = {
+                                ...lastReservedSlot.userDetails,
+                                userId, // Placeholder with userId
+                            };
+                        }
+                    }
+                });
+
+                const userDetailsMap: Record<string, any> = {};
+                for (const userId of userIdsToFetch) {
+                    try {
+                        const userDetails = await stadiumService.getCustomerById(userId);
+                        userDetailsMap[userId] = userDetails;
+                    } catch (error) {
+                        console.error(`Error fetching details for User ID: ${userId}`, error);
+                    }
+                }
+
+                processedAvailability.forEach((slot) => {
+                    if (slot.userDetails) {
+                        const userId = slot.userDetails.userId;
+                        if (userId) {
+                            slot.userDetails = {
+                                ...slot.userDetails,
+                                ...userDetailsMap[userId],
+                                reservationId: reservationIdMap[userId],
+                            };
+                        }
+                    }
+                });
+
+                setHourlyAvailability(processedAvailability); // Update the state with refreshed availability
+            }
+        } catch (error) {
+            console.error("Error canceling reservation:", error);
+            alert("Failed to cancel the reservation.");
+        }
+    };
+
+
 
     return (
         <>
@@ -296,6 +402,14 @@ const HomePage: React.FC = () => {
                                                     </p>
                                                     <p><strong>البريد
                                                         الإلكتروني:</strong> {availability.userDetails.emailAddress}</p>
+                                                    <button
+                                                        onClick={() =>
+                                                            handleCancelReservation(availability.userDetails.reservationId)
+                                                        }
+                                                        className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition focus:outline-none mt-2"
+                                                    >
+                                                        إلغاء الحجز
+                                                    </button>
                                                 </div>
                                             )}
                                         </div>
