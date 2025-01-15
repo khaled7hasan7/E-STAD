@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import stadiumService from "../Services/stadiumService.js";
+import adminService from "@/Services/adminService";
+
 import stadiumScheduleService from "../Services/stadiumScheduleService.js";
 import StadiumDetails from "../components/StadiumDetails.js";
 import StadiumSchedules from "../components/StadiumSchedules.js";
@@ -44,7 +46,7 @@ const StadiumPage: React.FC = () => {
         const fetchStadiums = async () => {
             setLoading(true);
             try {
-                const response = await stadiumService.getAllStadiums();
+                const response = await adminService.getApprovedStadiums();
                 if (response && response.length > 0) {
                     setStadiums(response); // Set the list of stadiums
                     setSelectedStadiumId(response[0].id); // Default to the first stadium

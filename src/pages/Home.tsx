@@ -6,6 +6,7 @@ import LoginPage from "@/components/Login";
 import stadiumScheduleService from "@/Services/stadiumScheduleService";
 import AcceptedStadiumList from "@/components/AcceptedStadiumList";
 import Login from "@/components/Login";
+import adminService from "@/Services/adminService";
 import stadiumService from "@/Services/stadiumService";
 
 const HomePage: React.FC = () => {
@@ -30,7 +31,7 @@ const HomePage: React.FC = () => {
         if (isAuthenticated && !isDataFetched) {
             const fetchStadiums = async () => {
                 try {
-                    const response = await stadiumService.getAllStadiums();
+                    const response = await adminService.getApprovedStadiums();
                     setStadiums(response);
                     if (response.length > 0) {
                         setSelectedStadium(response[0].id); // Automatically select the first stadium
@@ -82,7 +83,7 @@ const HomePage: React.FC = () => {
         // Fetch stadiums when the component mounts
         const fetchStadiums = async () => {
             try {
-                const response = await stadiumService.getAllStadiums();
+                const response = await adminService.getApprovedStadiums();
                 setStadiums(response);
                 if (response.length > 0) {
                     setSelectedStadium(response[0].id); // Automatically select the first stadium
@@ -106,48 +107,63 @@ const HomePage: React.FC = () => {
                 console.log("fetching availability for:",selectedStadium);
                 const availability = await stadiumScheduleService.getHourlyAvailability(selectedStadium, date);
 
-                const processedAvailability: string[] = [];
-                const reservations: { summary: string; details: string[] }[] = [];
-                console.log("availability:",availability)
+                const processedAvailability: { slot: string; userDetails?: any }[] = [];
+                const userIdsToFetch: string[] = [];
 
-                availability.forEach((slot, index) => {
-                    if (slot.includes("(Reserved)")) {
-                        // Add the reserved slot summary
-                        processedAvailability.push(slot);
+                availability.forEach((line, index) => {
+                    if (line.includes("(Available)")) {
+                        // Handle available slots
+                        processedAvailability.push({ slot: line });
+                    } else if (line.includes("(Reserved)")) {
+                        // Add the reserved slot
+                        processedAvailability.push({ slot: line });
+                    } else if (line.trim().startsWith("User ID:")) {
+                        // Extract the user ID and prepare for fetching user details
+                        const userId = line.trim().split(":")[1].trim();
+                        userIdsToFetch.push(userId);
 
-                        // Collect reservation details (5 lines after the reserved slot)
-                        const reservationDetails = availability.slice(index + 1, index + 6);
-                        reservations.push({
-                            summary: slot,
-                            details: reservationDetails,
-                        });
-                    } else if (
-                        !slot.includes("Reservation Details:") &&
-                        !slot.includes("Reservation ID:") &&
-                        !slot.includes("User ID:") &&
-                        !slot.includes("Stadium ID:") &&
-                        !slot.includes("Date:")
-                    ) {
-                        // Add non-reserved slots directly
-                        processedAvailability.push(slot);
+                        // Attach a placeholder for user details to match the reserved slot
+                        const lastReservedSlot = processedAvailability[processedAvailability.length - 1];
+                        if (lastReservedSlot) {
+                            lastReservedSlot.userDetails = { userId }; // Placeholder with userId
+                        }
+                    }
+                });
+
+                // Fetch user details for all user IDs
+                const userDetailsMap: Record<string, any> = {};
+                for (const userId of userIdsToFetch) {
+                    try {
+                        const userDetails = await stadiumService.getCustomerById(userId); // Fetch user details
+                        userDetailsMap[userId] = userDetails;
+                    } catch (error) {
+                        console.error(`Error fetching details for User ID: ${userId}`, error);
+                    }
+                }
+
+                // Populate user details in processed availability
+                processedAvailability.forEach((slot) => {
+                    if (slot.userDetails && userDetailsMap[slot.userDetails.userId]) {
+                        slot.userDetails = userDetailsMap[slot.userDetails.userId];
                     }
                 });
                 setHourlyAvailability(processedAvailability);
-                setReservedSlots(reservations);
+                // setReservedSlots(reservations);
 
                 console.log("Processed Availability:", processedAvailability);
-                console.log("Reserved Slots:", reservations);
+                // console.log("Reserved Slots:", reservations);
             } catch (error) {
                 console.error("Error fetching hourly availability:", error);
                 setHourlyAvailability([]);
-                setReservedSlots([]);
+                // setReservedSlots([]);
             } finally {
                 setLoading(false);
             }
         };
 
         fetchHourlyAvailability();
-    }, [isAuthenticated,selectedDate, selectedStadium]);
+    }, [isAuthenticated, selectedDate, selectedStadium]);
+
 
     // Get the start of the week
     const getWeekDates = (week: Date) => {
@@ -266,12 +282,22 @@ const HomePage: React.FC = () => {
                                 {loading ? (
                                     <p className="text-center text-gray-500">جاري التحميل...</p>
                                 ) : hourlyAvailability.length > 0 ? (
-                                    hourlyAvailability.map((availability) => (
+                                    hourlyAvailability.map((availability, index) => (
                                         <div
-                                            key={availability} // Use the value of availability as the key
-                                            className="border border-green-500 rounded-lg p-4 bg-gray-50 flex items-center justify-between shadow-md"
+                                            key={index}
+                                            className="border border-green-500 rounded-lg p-4 bg-gray-50 flex flex-col shadow-md"
                                         >
-                                            <p className="text-gray-700">{availability}</p>
+                                            <p className="text-gray-700">{availability.slot}</p>
+                                            {availability.userDetails && (
+                                                <div className="mt-2 text-sm text-gray-600">
+                                                    <p><strong>المستخدم:</strong> {availability.userDetails.fullName}
+                                                    </p>
+                                                    <p><strong>الهاتف:</strong> {availability.userDetails.phoneNumber}
+                                                    </p>
+                                                    <p><strong>البريد
+                                                        الإلكتروني:</strong> {availability.userDetails.emailAddress}</p>
+                                                </div>
+                                            )}
                                         </div>
                                     ))
                                 ) : (

@@ -10,20 +10,17 @@ const stadiumService = {
     async addStadium(stadium, mainImage, additionalImages) {
         try {
             const { accessToken } = authService.getAuthData(); // Get token from authService
-            // if (!accessToken) throw new Error("User is not authenticated");
-            console.log("accessToken",accessToken);
+            if (!accessToken) throw new Error("User is not authenticated");
 
             const formData = new FormData();
             formData.append("stadium", JSON.stringify(stadium)); // Add stadium JSON as text
             formData.append("mainImage", mainImage); // Add the main image
-
 
             if (additionalImages && additionalImages.length > 0) {
                 additionalImages.forEach((image) =>
                     formData.append("additionalImages", image) // Add additional images
                 );
             }
-            console.log(formData);
 
             // Send the request with the Authorization header
             const response = await axios.post(`${BASE_URL}/add-stadium`, formData, {
@@ -136,6 +133,25 @@ const stadiumService = {
             return response.data;
         } catch (error) {
             console.error("Error in uploadImage:", error);
+            throw error;
+        }
+    },
+
+    // Fetch customer details by user ID
+    async getCustomerById(userId) {
+        try {
+            const { accessToken } = authService.getAuthData(); // Get token from authService
+            if (!accessToken) throw new Error("User is not authenticated");
+
+            const response = await axios.get(`${BASE_URL}/customer/${userId}`, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`, // Set the token
+                },
+            });
+
+            return response.data;
+        } catch (error) {
+            console.error("Error in getCustomerById:", error);
             throw error;
         }
     },

@@ -145,17 +145,17 @@ const AcceptedStadiumList: React.FC = () => {
                             <p><strong>الكرات:</strong> {selectedStadium.stadium.hasBalls ? "نعم" : "لا"}</p>
                             <p><strong>عدد اللاعبين:</strong> {selectedStadium.stadium.numberOfPlayers}</p>
                             <p><strong>ملاحظات:</strong> {selectedStadium.stadium.remarks || "لا توجد ملاحظات"}</p>
-                            <p><strong>صور إضافية:</strong></p>
-                            <div className="grid grid-cols-2 gap-2">
-                                {selectedStadium.stadium.additionalImages.map((image, index) => (
-                                    <img
-                                        key={index}
-                                        src={image}
-                                        alt={`Additional Image ${index + 1}`}
-                                        className="rounded-lg border shadow"
-                                    />
-                                ))}
-                            </div>
+                            {/*<p><strong>صور إضافية:</strong></p>*/}
+                            {/*<div className="grid grid-cols-2 gap-2">*/}
+                            {/*    {selectedStadium.stadium.additionalImages.map((image, index) => (*/}
+                            {/*        <img*/}
+                            {/*            key={index}*/}
+                            {/*            src={image}*/}
+                            {/*            alt={`Additional Image ${index + 1}`}*/}
+                            {/*            className="rounded-lg border shadow"*/}
+                            {/*        />*/}
+                            {/*    ))}*/}
+                            {/*</div>*/}
                             <h3 className="text-xl font-semibold mt-4">تفاصيل المالك</h3>
                             <p><strong>الاسم الكامل:</strong> {selectedStadium.owner.fullName}</p>
                             <p><strong>رقم الهاتف:</strong> {selectedStadium.owner.phoneNumber}</p>
