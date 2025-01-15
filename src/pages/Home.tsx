@@ -23,9 +23,11 @@ const HomePage: React.FC = () => {
         const fetchHourlyAvailability = async () => {
             setLoading(true);
             try {
-                const stadiumId = "example-stadium-id"; // Replace with the actual stadium ID
+                const stadiumId = "677c4967898e2b18c9940c95"; // Replace with the actual stadium ID
                 const date = format(selectedDate, "yyyy-MM-dd"); // Format the selected date
                 const availability = await stadiumScheduleService.getHourlyAvailability(stadiumId, date);
+                console.log(stadiumId+" , "+date);
+                console.table(availability);
                 setHourlyAvailability(availability);
             } catch (error) {
                 console.error("Error fetching hourly availability:", error);
@@ -67,96 +69,101 @@ const HomePage: React.FC = () => {
         setCancelReason(""); // Reset cancellation reason
     };
 
+    const btnWeekStyle = "bg-mainColor text-white font-medium text-sm  mx-4 rounded-lg h-10 px-4 py-2 hover:bg-mainColor/60";
+
     return (
         <>
             {role === "OWNER" ? (
                 <AcceptedStadiumList />
             ) : (
-                <div className="p-6">
+                <div className="p-6 mx-auto">
                     {isAuthenticated ? (
                         <>
                             {/* Month Display */}
-                            <div className="text-center mb-4">
-                                <h2 className="text-lg font-bold">
-                                    {` ${format(currentWeek, "MMMM yyyy", { locale: ar })}`}
+                            <div className="text-center mb-6">
+                                <h2 
+                                    className="text-3xl font-bold text-gray-800"
+                                    style={{ textShadow: "2px 2px 4px rgba(0, 0, 0, 0.3)" }}
+                                >
+                                    {`${format(currentWeek, "MMMM yyyy", { locale: ar })}`}
                                 </h2>
                             </div>
-
+    
                             {/* Week Calendar with Navigation */}
-                            <div className="flex justify-between items-center mb-6">
+                            <div className="flex items-center justify-between p-3 mb-8 shadow-sm rounded-lg">
                                 <button
-                                    onClick={handleNextWeek} // Next week points to the left
-                                    className="text-mainColor font-bold text-lg"
+                                    onClick={handleNextWeek}
+                                    className={btnWeekStyle}
                                 >
-                                    &larr; الأسبوع التالي
+                                    الأسبوع التالي
                                 </button>
-                                <div className="flex justify-center gap-2">
+
+                                <div className="flex gap-10">
                                     {weekDates.map((date, index) => (
                                         <div
                                             key={index}
-                                            onClick={() => setSelectedDate(date)} // Set selected date
-                                            className={`flex flex-col items-center justify-center w-12 h-12 rounded-full cursor-pointer ${
+                                            onClick={() => setSelectedDate(date)}
+                                            className={`flex flex-col items-center justify-center w-20 h-14 rounded-lg cursor-pointer shadow ${
                                                 format(date, "yyyy-MM-dd") ===
                                                 format(selectedDate, "yyyy-MM-dd")
                                                     ? "bg-green-500 text-white"
-                                                    : "bg-gray-200"
+                                                    : "bg-gray-100 hover:bg-gray-200"
                                             }`}
                                         >
-                                            <span className="text-xs">
-                                                {format(date, "EEEE", { locale: ar }).slice(0, 3)}{" "}
-                                                {/* Short day */}
+                                            <span className="text-sm font-medium">
+                                                {format(date, "EEEE", { locale: ar }).slice(0, 10)}
                                             </span>
-                                            <span className="text-sm font-bold">{format(date, "d")}</span>
+                                            <span className="text-lg font-bold">{format(date, "d")}</span>
                                         </div>
                                     ))}
                                 </div>
                                 <button
-                                    onClick={handlePrevWeek} // Previous week points to the right
-                                    className="text-mainColor font-bold text-lg"
+                                    onClick={handlePrevWeek}
+                                    className={btnWeekStyle}
                                 >
-                                    الأسبوع السابق &rarr;
+                                    الأسبوع السابق 
                                 </button>
                             </div>
-
+    
                             {/* Hourly Availability Section */}
-                            <div className="space-y-4" style={{ minHeight: "300px" }}>
+                            <div className="space-y-6">
                                 {loading ? (
-                                    <p className="text-center text-gray-600">جاري التحميل...</p>
+                                    <p className="text-center text-gray-500">جاري التحميل...</p>
                                 ) : hourlyAvailability.length > 0 ? (
                                     hourlyAvailability.map((availability, index) => (
                                         <div
                                             key={index}
-                                            className="border border-green-500 rounded-lg p-4 bg-gray-100 flex flex-col"
+                                            className="border border-green-500 rounded-lg p-4 bg-gray-50 flex items-center justify-between shadow-md"
                                         >
                                             <p className="text-gray-700">{availability}</p>
                                         </div>
                                     ))
                                 ) : (
-                                    <p className="text-center text-gray-600">لا توجد بيانات لهذا اليوم.</p>
+                                    <p className="text-center text-gray-500">لا توجد بيانات لهذا اليوم.</p>
                                 )}
                             </div>
-        
+    
                             {/* Cancel Modal */}
                             {showCancelModal && (
-                                <div className="fixed inset-0 bg-black bg-opacity-30 flex justify-center items-center">
-                                    <div className="bg-white p-6 rounded-md shadow-lg space-y-4">
-                                        <h2 className="text-xl font-bold text-red-500">إلغاء الحجز</h2>
+                                <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+                                    <div className="bg-white p-6 rounded-lg shadow-lg w-96 space-y-4">
+                                        <h2 className="text-xl font-semibold text-red-600 text-center">إلغاء الحجز</h2>
                                         <textarea
                                             placeholder="أدخل سبب الإلغاء..."
                                             value={cancelReason}
                                             onChange={(e) => setCancelReason(e.target.value)}
-                                            className="w-full border border-gray-300 p-2 rounded-md"
-                                        ></textarea>
+                                            className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring focus:ring-red-300"
+                                        />
                                         <div className="flex justify-between">
                                             <button
                                                 onClick={() => setShowCancelModal(false)}
-                                                className="text-gray-500 font-bold"
+                                                className="text-gray-600 font-medium px-4 py-2 hover:bg-gray-100 rounded-lg"
                                             >
                                                 إلغاء
                                             </button>
                                             <button
                                                 onClick={confirmCancelBooking}
-                                                className="text-white bg-red-500 px-4 py-2 rounded-md"
+                                                className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"
                                             >
                                                 تأكيد
                                             </button>

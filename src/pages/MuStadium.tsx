@@ -168,7 +168,7 @@ const StadiumPage: React.FC = () => {
     if (!stadiumData) return <p>لا توجد بيانات ملعب للعرض.</p>;
 
     return (
-        <div className="p-6 bg-white rounded-md shadow-md space-y-6 max-w-lg mx-auto">
+        <div className="p-6 bg-red-500 rounded-md shadow-md my-5 px-52">
             <h2 className="text-lg font-bold text-center">تفاصيل الملعب الخاص بك:</h2>
 
             {/* Stadium Details */}
@@ -223,13 +223,13 @@ const StadiumPage: React.FC = () => {
                                 onChange={handleDaysOfWeekChange}
                                 className="w-full px-3 py-2 border border-gray-300 rounded-md"
                             >
-                                <option value="Sunday">Sunday</option>
-                                <option value="Monday">Monday</option>
-                                <option value="Tuesday">Tuesday</option>
-                                <option value="Wednesday">Wednesday</option>
-                                <option value="Thursday">Thursday</option>
-                                <option value="Friday">Friday</option>
-                                <option value="Saturday">Saturday</option>
+                                <option value="SUNDAY">Sunday</option>
+                                <option value="MONDAY">Monday</option>
+                                <option value="TUESDAY">Tuesday</option>
+                                <option value="WEDNESDAY">Wednesday</option>
+                                <option value="THURSDAY">Thursday</option>
+                                <option value="FRIDAY">Friday</option>
+                                <option value="SATURDAY">Saturday</option>
                             </select>
                         </div>
                         <div>

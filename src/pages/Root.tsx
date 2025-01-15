@@ -6,6 +6,7 @@ export default function RootLayout(){
     return(
         <div className="min-h-screen flex flex-col">
             <Header />
+            {/* <main className='container mx-auto'> */}
             <main className='flex-grow m-auto'>
                 <Outlet />
             </main>

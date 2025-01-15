@@ -32,12 +32,10 @@ const StadiumDetails: React.FC<StadiumDetailsProps> = ({
                                                             onAdditionalImagesChange,
                                                         }) => {
     return (
-        <div dir="rtl"> {/* Ensure Right-to-Left layout */}
-            <h2 className="text-lg font-bold text-center mb-4">تفاصيل الملعب:</h2>
-
+        <div dir="rtl" className="bg-green-400 px-36">
             {/* Stadium Name & Location */}
-            <div className="grid grid-cols-2 gap-4">
-                <div>
+            <div className="grid grid-cols-2 gap-20 mt-10">
+                <div className="">
                     <label className="block text-sm mb-2 text-right">اسم الملعب</label>
                     <input
                         type="text"
