@@ -46,7 +46,7 @@ const StadiumPage: React.FC = () => {
         const fetchStadiums = async () => {
             setLoading(true);
             try {
-                const response = await adminService.getApprovedStadiums();
+                const response = await stadiumService.getAllStadiums();
                 if (response && response.length > 0) {
                     setStadiums(response); // Set the list of stadiums
                     setSelectedStadiumId(response[0].id); // Default to the first stadium
